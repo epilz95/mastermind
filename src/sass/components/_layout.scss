@@ -1,0 +1,14 @@
+* {
+    box-sizing: border-box;
+}
+
+.l-wrapper {
+    padding: 100px 0;
+
+    background-image: linear-gradient(145deg, $color-mine-shaft 0%, $color-cod-gray 100%);
+}
+
+.l-inner {
+    margin: 0 auto;
+    width: 1200px;
+}
