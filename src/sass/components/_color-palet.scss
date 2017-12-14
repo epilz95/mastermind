@@ -1,7 +1,9 @@
 .color-palet {
     $color-palet-padding: 8px;
 
-    position: relative;
+    display: none;
+
+    position: absolute;
 
     width: 130px;
     height: 130px;

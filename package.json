@@ -91,7 +91,11 @@
     "globals": [
       "describe",
       "it",
-      "expect"
+      "expect",
+      "HTMLElement",
+      "Event",
+      "MouseEvent",
+      "String"
     ]
   },
   "license": "UNLICENSED",
