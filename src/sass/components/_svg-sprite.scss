@@ -2,3 +2,13 @@
 	background: url("../img/sprite.svg") no-repeat;
 }
 
+.svg-icon__arrow-left--lg--grey {
+	@extend %svg-common;
+	background-position: 0 0;
+}
+
+.svg-icon__arrow-left--lg--grey-dims {
+	width: 18px;
+	height: 28px;
+}
+
