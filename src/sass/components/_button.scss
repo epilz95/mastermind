@@ -1,0 +1,45 @@
+.button {
+    border: 3px solid $color-white;
+    padding: 5px 20px;
+
+    background: transparent;
+    color: $color-white;
+    font: normal 16px/30px "Open Sans", sans-serif;
+    border-radius: 50px;
+    outline: none;
+
+    transition: background 0.2s, transform 0.2s;
+
+    &--check {
+        position: absolute;
+        right: -115px;
+        bottom: 30px;
+    }
+
+    &--full-width {
+        margin-top: 30px;
+        width: 100%;
+
+        background: $color-dove-gray;
+
+        &:hover {
+            background:
+                linear-gradient(
+                    145deg,
+                    $color-lemon 0%,
+                    $color-salem 30%,
+                    $color-denim 60%,
+                    $color-thunderbird 100%
+                );
+        }
+    }
+
+    &:hover {
+        background-color: $color-dove-gray;
+        cursor: pointer;
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
