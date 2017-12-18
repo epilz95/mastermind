@@ -19,7 +19,7 @@ describe('initGame()', () => {
 })
 
 describe('generateCode()', () => {
-  const COLORS: Colors = [
+  const COLORS = [
     {
       name: 'lemon',
       color: '#f93b19'
