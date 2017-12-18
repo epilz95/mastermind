@@ -5,6 +5,48 @@ import 'normalize.css'
 // $FlowFixMe
 import '../sass/main.scss'
 
+type Color = {|
+  name: string,
+  color: string
+|}
+
+type Colors = Array<Color>
+
+const COLORS: Colors = [
+  {
+    name: 'lemon',
+    color: '#f93b19'
+  },
+  {
+    name: 'citron',
+    color: '#97c11f'
+  },
+  {
+    name: 'salem',
+    color: '#0d8f35'
+  },
+  {
+    name: 'picton-blue',
+    color: '#2daae2'
+  },
+  {
+    name: 'denim',
+    color: '#1071b8'
+  },
+  {
+    name: 'port-gore',
+    color: '#28235d'
+  },
+  {
+    name: 'thunderbird',
+    color: '#bf1522'
+  },
+  {
+    name: 'tangerine',
+    color: '#f29200'
+  }
+]
+
 let store = {
   paletNode: undefined
 }
@@ -13,11 +55,7 @@ const setState = (newState) => {
   store = { ...store, ...newState }
 }
 
-const positions = document.querySelectorAll('.position')
-const colorPalet = document.querySelector('.color-palet')
-const colorPaletColor = colorPalet
-  ? colorPalet.querySelectorAll('.color-palet__option')
-  : undefined
+const getRandomColor = (array: Colors): Color => array[Math.floor(Math.random() * array.length)]
 
 const showColorPalet = (e, colorPalet: ?HTMLElement, position: ?HTMLElement) => {
   e.stopPropagation()
@@ -59,22 +97,65 @@ const hideColorPalet = (colorPalet: ?HTMLElement) => {
   if (colorPalet) colorPalet.style.display = 'none'
 }
 
-positions.forEach(
-  position => position.addEventListener('click', (e: MouseEvent) => showColorPalet(e, colorPalet, position))
-)
+export const generateCode = (
+  colors: Colors,
+  count: number,
+  init: Array<Color> = []
+): Colors => {
+  if (count <= 0) return init
 
-window.addEventListener('click', () => hideColorPalet(colorPalet))
+  const result = [ ...init, getRandomColor(colors) ]
 
-if (colorPaletColor) {
-  colorPaletColor.forEach(
-    color => color.addEventListener('click', (e: MouseEvent) => setColor(e))
-  )
+  return generateCode(colors, count - 1, result)
 }
 
-export const theStringMachine = (val: ?string) => {
-  if (typeof val === 'number') return `Number: ${val}`
+export const initGame = (
+  stateSetterFnc: Function,
+  codeGenFnc: Function,
+  colorPalet: Colors
+  ) => {
+  const secretCode = codeGenFnc(colorPalet, 4)
 
-  if (typeof val === 'string') return `${val}, YAY!`
-
-  return 'What the hell is this???'
+  console.log('before', { store })
+  stateSetterFnc({ secretCode })
+  console.log('afer', { store })
 }
+
+const addListeners = (): void => {
+  const positionNodes = document.querySelectorAll('.position')
+  const colorPaletNode = document.querySelector('.color-palet')
+
+  if (positionNodes && colorPaletNode) {
+    positionNodes.forEach(
+      node => node.addEventListener('click', (e: MouseEvent) => showColorPalet(e, colorPaletNode, node))
+    )
+  }
+
+  if (window && colorPaletNode) {
+    window.addEventListener('click', () => hideColorPalet(colorPaletNode))
+  }
+
+  const colorPaletColorNodes = colorPaletNode
+  ? colorPaletNode.querySelectorAll('.color-palet__option')
+  : undefined
+
+  if (colorPaletColorNodes) {
+    colorPaletColorNodes.forEach(
+      node => node.addEventListener('click', (e: MouseEvent) => setColor(e))
+    )
+  }
+
+  const buttonStart = document.querySelector('.button-start')
+
+  if (buttonStart) {
+    buttonStart.addEventListener('click', () =>
+      initGame(setState, generateCode, COLORS)
+    )
+  }
+}
+
+const main = () => {
+  addListeners()
+}
+
+main()

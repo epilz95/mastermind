@@ -95,7 +95,8 @@
       "HTMLElement",
       "Event",
       "MouseEvent",
-      "String"
+      "NodeList",
+      "jest"
     ]
   },
   "license": "UNLICENSED",
