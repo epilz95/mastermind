@@ -1,20 +1,61 @@
-import { initGame, generateCode } from '../index'
+import { initGame, generateCode, initNewRound } from '../index'
 
 describe('initGame()', () => {
+  const setUp = (configOverwrite) => {
+    const config = {
+      stateSetterFnc: () => {},
+      codeGenFnc: () => 'placeholder',
+      roundInitializer: () => {
+        return {
+          currRound: 'placeholder',
+          newRoundObj: {}
+        }
+      },
+      colorPalet: [],
+      ...configOverwrite
+    }
+
+    const result = initGame(config)
+
+    return {
+      result,
+      config
+    }
+  }
+
   it('should call code generator', () => {
-    const codeGenMock = jest.fn()
+    const { config } = setUp({
+      codeGenFnc: jest.fn()
+    })
 
-    initGame(() => {}, codeGenMock)
-
-    expect(codeGenMock.mock.calls.length).toBe(1)
+    expect(config.codeGenFnc.mock.calls.length).toBe(1)
   })
 
   it('should call setState func', () => {
-    const setStateMock = jest.fn()
+    const { config } = setUp({
+      stateSetterFnc: jest.fn()
+    })
 
-    initGame(setStateMock, () => {})
+    const mockCalls = config.stateSetterFnc.mock.calls
 
-    expect(setStateMock.mock.calls.length).toBe(1)
+    expect(mockCalls.length).toBe(1)
+
+    expect(mockCalls[0]).toEqual([{
+      secretCode: expect.anything(),
+      currRound: 'placeholder',
+      rounds: [{}]
+    }])
+  })
+
+  it('should call roundInitializer to init first round', () => {
+    const { config } = setUp({
+      roundInitializer: jest.fn().mockReturnValue({
+        currRound: 'placeholder',
+        newRoundObj: {}
+      })
+    })
+
+    expect(config.roundInitializer.mock.calls.length).toBe(1)
   })
 })
 
@@ -65,6 +106,30 @@ describe('generateCode()', () => {
 
     result.forEach(i => {
       expect(COLORS.find((el) => el.name === i.name)).not.toBe(undefined)
+    })
+  })
+})
+
+describe('initNewRound()', () => {
+  it('should return first round if current round is undefined', () => {
+    const { currRound, newRoundObj } = initNewRound(undefined)
+
+    expect(currRound).toBe(1)
+
+    expect(newRoundObj).toEqual({
+      id: 1,
+      secretCode: []
+    })
+  })
+
+  it('should return next round', () => {
+    const { currRound, newRoundObj } = initNewRound(1)
+
+    expect(currRound).toBe(2)
+
+    expect(newRoundObj).toEqual({
+      id: 2,
+      secretCode: []
     })
   })
 })

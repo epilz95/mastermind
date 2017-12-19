@@ -48,7 +48,10 @@ const COLORS: Colors = [
 ]
 
 let store = {
-  paletNode: undefined
+  paletNode: undefined,
+  secretCode: undefined,
+  currRound: undefined,
+  rounds: []
 }
 
 const setState = (newState) => {
@@ -89,6 +92,7 @@ const setColor = (e) => {
 
     if (store.paletNode instanceof HTMLElement) {
       store.paletNode.style.backgroundColor = colorClicked
+      // store.paletNode.setAttribute('data-color', colorClicked)
     }
   }
 }
@@ -109,16 +113,45 @@ export const generateCode = (
   return generateCode(colors, count - 1, result)
 }
 
-export const initGame = (
+export const initNewRound = (currRound: number) => {
+  const isFirstRound = typeof currRound === 'undefined'
+
+  const newRound = isFirstRound
+    ? 1
+    : currRound + 1
+
+  const newRoundObj = {
+    id: newRound,
+    secretCode: []
+  }
+
+  return {
+    currRound: newRound,
+    newRoundObj
+  }
+}
+
+export const initGame = ({
+  stateSetterFnc,
+  codeGenFnc,
+  roundInitializer,
+  colorPalet
+}: {
   stateSetterFnc: Function,
   codeGenFnc: Function,
+  roundInitializer: Function,
   colorPalet: Colors
-  ) => {
+}) => {
   const secretCode = codeGenFnc(colorPalet, 4)
 
-  console.log('before', { store })
-  stateSetterFnc({ secretCode })
-  console.log('afer', { store })
+  const newRound = roundInitializer(undefined)
+
+  stateSetterFnc({
+    secretCode,
+    currRound: newRound.currRound,
+    rounds: [newRound.newRoundObj]
+  })
+  console.log({ store })
 }
 
 const addListeners = (): void => {
@@ -149,7 +182,12 @@ const addListeners = (): void => {
 
   if (buttonStart) {
     buttonStart.addEventListener('click', () =>
-      initGame(setState, generateCode, COLORS)
+      initGame({
+        stateSetterFnc: setState,
+        codeGenFnc: generateCode,
+        roundInitializer: initNewRound,
+        colorPalet: COLORS
+      })
     )
   }
 }
