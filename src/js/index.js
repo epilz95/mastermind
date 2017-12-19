@@ -92,7 +92,6 @@ const setColor = (e) => {
 
     if (store.paletNode instanceof HTMLElement) {
       store.paletNode.style.backgroundColor = colorClicked
-      // store.paletNode.setAttribute('data-color', colorClicked)
     }
   }
 }
