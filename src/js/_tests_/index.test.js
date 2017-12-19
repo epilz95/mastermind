@@ -118,7 +118,7 @@ describe('initNewRound()', () => {
 
     expect(newRoundObj).toEqual({
       id: 1,
-      secretCode: []
+      secretCode: {}
     })
   })
 
@@ -129,7 +129,7 @@ describe('initNewRound()', () => {
 
     expect(newRoundObj).toEqual({
       id: 2,
-      secretCode: []
+      secretCode: {}
     })
   })
 })

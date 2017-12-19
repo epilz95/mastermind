@@ -121,7 +121,7 @@ export const initNewRound = (currRound: number) => {
 
   const newRoundObj = {
     id: newRound,
-    secretCode: []
+    secretCode: {}
   }
 
   return {
@@ -150,6 +150,7 @@ export const initGame = ({
     currRound: newRound.currRound,
     rounds: [newRound.newRoundObj]
   })
+
   console.log({ store })
 }
 
