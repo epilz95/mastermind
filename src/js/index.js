@@ -154,6 +154,57 @@ export const initGame = ({
   console.log({ store })
 }
 
+const getSelectedColors = (currRoundRow: ?HTMLElement) => {
+  if (store.currRound !== undefined) {
+    const currRoundRow = document.querySelector(`.panel__row:nth-last-child(${store.currRound})`)
+
+    if (currRoundRow) {
+      const colorNode = currRoundRow.querySelectorAll('[data-position]')
+
+      if (colorNode && colorNode.forEach(node => node.hasAttribute('style'))) {
+        const node1 = currRoundRow.querySelector('[data-position="color1"]')
+        const color1 = node1
+         ? node1.style.backgroundColor
+         : ''
+
+        const node2 = currRoundRow.querySelector('[data-position="color2"]')
+        const color2 = node2
+          ? node2.style.backgroundColor
+          : ''
+
+        const node3 = currRoundRow.querySelector('[data-position="color3"]')
+        const color3 = node3
+          ? node3.style.backgroundColor
+          : ''
+
+        const node4 = currRoundRow.querySelector('[data-position="color4"]')
+        const color4 = node4
+          ? node4.style.backgroundColor
+          : ''
+
+        if (color1 && color2 && color3 && color4) {
+          const secretCode = {color1, color2, color3, color4}
+          return secretCode
+        } else {
+          const errorMessage = document.querySelector('.error')
+          if (errorMessage) errorMessage.style.display = 'block'
+        }
+      }
+    }
+  }
+}
+
+const compareToCode = ({
+  roundInitializer,
+  getSelColorsFnc
+}: {
+  roundInitializer: Function,
+  getSelColorsFnc: Function
+}) => {
+  const currRound = roundInitializer(store.currRound)
+  const secretCode = getSelColorsFnc()
+}
+
 const addListeners = (): void => {
   const positionNodes = document.querySelectorAll('.position')
   const colorPaletNode = document.querySelector('.color-palet')
@@ -187,6 +238,17 @@ const addListeners = (): void => {
         codeGenFnc: generateCode,
         roundInitializer: initNewRound,
         colorPalet: COLORS
+      })
+    )
+  }
+
+  const buttonCheck = document.querySelector('.button--check')
+
+  if (buttonCheck) {
+    buttonCheck.addEventListener('click', () =>
+      compareToCode({
+        roundInitializer: initNewRound,
+        getSelColorsFnc: getSelectedColors
       })
     )
   }
