@@ -2,7 +2,9 @@ import {
   initGame,
   generateCode,
   initNewRound,
-  addColorToRound
+  addColorToRound,
+  checkCodeLength,
+  convertToColorCode
    } from '../index'
 
 describe('initGame()', () => {
@@ -228,6 +230,40 @@ describe('addColorToRound', () => {
           }
         }
       }
+    })
+  })
+})
+
+describe('checkCodeLength', () => {
+  it('should return true if playerCode has 4 items', () => {
+    const playerCode = {
+      color1: '#324234',
+      color2: '#324234',
+      color3: '#324234',
+      color4: '#324234'
+    }
+
+    expect(checkCodeLength(playerCode)).toBe(true)
+  })
+
+  it('should return false if playerCode has less than 4 items', () => {
+    const playerCode = {
+      color1: '#324234',
+      color2: '#324234'
+    }
+
+    expect(checkCodeLength(playerCode)).toBe(false)
+  })
+})
+
+describe('converToColorCode()', () => {
+  it('should convert array of colors to colocCode object', () => {
+    expect(convertToColorCode([
+      { color: '#abc' },
+      { color: '#def' }
+    ])).toEqual({
+      color1: '#abc',
+      color2: '#def'
     })
   })
 })

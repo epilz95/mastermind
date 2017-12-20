@@ -12,6 +12,11 @@ type Color = {|
 
 type Colors = Array<Color>
 
+type ColorPosition = string
+type ColorHex = string
+
+type ColorCode = { [ColorPosition]: ColorHex }
+
 const COLORS: Colors = [
   {
     name: 'lemon',
@@ -49,7 +54,7 @@ const COLORS: Colors = [
 
 let store = {
   paletNode: undefined,
-  secretCode: undefined,
+  secretCode: {},
   currRound: undefined,
   rounds: {}
 }
@@ -62,13 +67,13 @@ const setState = (newState) => {
 
 const getRandomColor = (array: Colors): Color => array[Math.floor(Math.random() * array.length)]
 
-const showColorPalet = (e, colorPalet: ?HTMLElement, position: ?HTMLElement) => {
+const showColorPalet = (e, colorPalet: ?HTMLElement, codeNode: ?HTMLElement) => {
   e.stopPropagation()
 
-  if (colorPalet && position) {
+  if (colorPalet && codeNode) {
     setState({ paletNode: e.target })
 
-    const positionCoords = position.getBoundingClientRect()
+    const positionCoords = codeNode.getBoundingClientRect()
 
     colorPalet.style.display = 'block'
 
@@ -93,19 +98,20 @@ export const addColorToRound = ({
   color,
   position
 }: {
-  currRound: string,
+  currRound: number,
   rounds: Object,
   stateSetterFnc: Function,
   color: string,
   position: string
 }) => {
-  const currRoundObj = rounds[currRound]
+  const currRoundStr = currRound.toString()
+  const currRoundObj = rounds[currRoundStr]
   const currPlayerCode = currRoundObj.playerCode
 
   const newState = {
     rounds: {
       ...rounds,
-      [currRound]: {
+      [currRoundStr]: {
         ...currRoundObj,
         playerCode: {
           ...currPlayerCode,
@@ -140,14 +146,22 @@ const setColor = (e) => {
         color,
         position
       })
-
-      console.log({ store })
     }
   }
 }
 
 const hideColorPalet = (colorPalet: ?HTMLElement) => {
   if (colorPalet) colorPalet.style.display = 'none'
+}
+
+export const convertToColorCode = (colors: Colors): ColorCode => {
+  return colors.reduce((acc, c, i) => {
+    const position = i + 1
+    return {
+      ...acc,
+      [`color${position.toString()}`]: c.color
+    }
+  }, {})
 }
 
 export const generateCode = (
@@ -162,7 +176,7 @@ export const generateCode = (
   return generateCode(colors, count - 1, result)
 }
 
-export const initNewRound = (currRound: number) => {
+export const initNewRound = (currRound: ?number) => {
   const isFirstRound = typeof currRound === 'undefined'
 
   const newRound = isFirstRound
@@ -191,7 +205,8 @@ export const initGame = ({
   roundInitializer: Function,
   colorPalet: Colors
 }) => {
-  const secretCode = codeGenFnc(colorPalet, 4)
+  const colorArray = codeGenFnc(colorPalet, 4)
+  const secretCode = convertToColorCode(colorArray)
 
   const newRound = roundInitializer(undefined)
 
@@ -202,44 +217,8 @@ export const initGame = ({
   })
 }
 
-const getSelectedColors = (currRoundRow: ?HTMLElement) => {
-  if (store.currRound !== undefined) {
-    const currRoundRow = document.querySelector(`.panel__row:nth-last-child(${store.currRound})`)
-
-    if (currRoundRow) {
-      const colorNode = currRoundRow.querySelectorAll('[data-position]')
-
-      if (colorNode && colorNode.forEach(node => node.hasAttribute('style'))) {
-        const node1 = currRoundRow.querySelector('[data-position="color1"]')
-        const color1 = node1
-         ? node1.style.backgroundColor
-         : ''
-
-        const node2 = currRoundRow.querySelector('[data-position="color2"]')
-        const color2 = node2
-          ? node2.style.backgroundColor
-          : ''
-
-        const node3 = currRoundRow.querySelector('[data-position="color3"]')
-        const color3 = node3
-          ? node3.style.backgroundColor
-          : ''
-
-        const node4 = currRoundRow.querySelector('[data-position="color4"]')
-        const color4 = node4
-          ? node4.style.backgroundColor
-          : ''
-
-        if (color1 && color2 && color3 && color4) {
-          const secretCode = {color1, color2, color3, color4}
-          return secretCode
-        } else {
-          const errorMessage = document.querySelector('.error')
-          if (errorMessage) errorMessage.style.display = 'block'
-        }
-      }
-    }
-  }
+export const checkCodeLength = (playerCode: Object) => {
+  return Object.keys(playerCode).length === 4
 }
 
 const addListeners = (): void => {
@@ -277,6 +256,55 @@ const addListeners = (): void => {
         colorPalet: COLORS
       })
     )
+  }
+
+  const buttonCheck = document.querySelector('.button--check')
+
+  if (buttonCheck) {
+    buttonCheck.addEventListener('click', () => {
+      const { currRound, rounds } = store
+      const currRoundObj = currRound
+        ? rounds[currRound]
+        : undefined
+
+      const playerCode = currRoundObj
+        ? currRoundObj.playerCode
+        : {}
+
+      const isValidCode = checkCodeLength(playerCode)
+      const errorMessage = document.querySelector('.error')
+
+      if (!isValidCode && errorMessage) {
+        errorMessage.style.display = 'block'
+      } else if (errorMessage) {
+        errorMessage.style.display = 'none'
+      }
+
+      if (!isValidCode) return
+
+      // compare player code with secret code
+
+      // --> show hints for current round
+
+      // if player code === secret code
+        // --> end game 'win'
+
+      // if player code !== secret code && last round
+        // --> end game 'lose'
+
+      // if player code !== secret code
+        // --> init next round
+      const newRound = initNewRound(currRound)
+
+      setState({
+        currRound: newRound.currRound,
+        rounds: {
+          ...rounds,
+          [newRound.currRound.toString()]: newRound.newRoundObj
+        }
+      })
+      console.log({ store, currRound })
+    })
   }
 }
 
