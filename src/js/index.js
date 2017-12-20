@@ -51,11 +51,13 @@ let store = {
   paletNode: undefined,
   secretCode: undefined,
   currRound: undefined,
-  rounds: []
+  rounds: {}
 }
 
 const setState = (newState) => {
   store = { ...store, ...newState }
+
+  return newState
 }
 
 const getRandomColor = (array: Colors): Color => array[Math.floor(Math.random() * array.length)]
@@ -84,14 +86,62 @@ const showColorPalet = (e, colorPalet: ?HTMLElement, position: ?HTMLElement) => 
   }
 }
 
+export const addColorToRound = ({
+  currRound,
+  rounds,
+  stateSetterFnc,
+  color,
+  position
+}: {
+  currRound: string,
+  rounds: Object,
+  stateSetterFnc: Function,
+  color: string,
+  position: string
+}) => {
+  const currRoundObj = rounds[currRound]
+  const currPlayerCode = currRoundObj.playerCode
+
+  const newState = {
+    rounds: {
+      ...rounds,
+      [currRound]: {
+        ...currRoundObj,
+        playerCode: {
+          ...currPlayerCode,
+          [position]: color
+        }
+      }
+    }
+  }
+
+  stateSetterFnc(newState)
+
+  return newState
+}
+
 const setColor = (e) => {
+  if (store.currRound === undefined) return
+
   const target = e.target
 
   if (target instanceof HTMLElement) {
-    const colorClicked = target.dataset.color
+    const { color } = target.dataset
 
     if (store.paletNode instanceof HTMLElement) {
-      store.paletNode.style.backgroundColor = colorClicked
+      store.paletNode.style.backgroundColor = color
+
+      const { position } = store.paletNode.dataset
+
+      addColorToRound({
+        currRound: store.currRound,
+        rounds: store.rounds,
+        stateSetterFnc: setState,
+        color,
+        position
+      })
+
+      console.log({ store })
     }
   }
 }
@@ -120,8 +170,8 @@ export const initNewRound = (currRound: number) => {
     : currRound + 1
 
   const newRoundObj = {
-    id: newRound,
-    secretCode: {}
+    id: newRound.toString(),
+    playerCode: {}
   }
 
   return {
@@ -148,10 +198,8 @@ export const initGame = ({
   stateSetterFnc({
     secretCode,
     currRound: newRound.currRound,
-    rounds: [newRound.newRoundObj]
+    rounds: { [newRound.currRound.toString()]: newRound.newRoundObj }
   })
-
-  console.log({ store })
 }
 
 const getSelectedColors = (currRoundRow: ?HTMLElement) => {
@@ -194,17 +242,6 @@ const getSelectedColors = (currRoundRow: ?HTMLElement) => {
   }
 }
 
-const compareToCode = ({
-  roundInitializer,
-  getSelColorsFnc
-}: {
-  roundInitializer: Function,
-  getSelColorsFnc: Function
-}) => {
-  const currRound = roundInitializer(store.currRound)
-  const secretCode = getSelColorsFnc()
-}
-
 const addListeners = (): void => {
   const positionNodes = document.querySelectorAll('.position')
   const colorPaletNode = document.querySelector('.color-palet')
@@ -238,17 +275,6 @@ const addListeners = (): void => {
         codeGenFnc: generateCode,
         roundInitializer: initNewRound,
         colorPalet: COLORS
-      })
-    )
-  }
-
-  const buttonCheck = document.querySelector('.button--check')
-
-  if (buttonCheck) {
-    buttonCheck.addEventListener('click', () =>
-      compareToCode({
-        roundInitializer: initNewRound,
-        getSelColorsFnc: getSelectedColors
       })
     )
   }

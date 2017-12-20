@@ -1,4 +1,9 @@
-import { initGame, generateCode, initNewRound } from '../index'
+import {
+  initGame,
+  generateCode,
+  initNewRound,
+  addColorToRound
+   } from '../index'
 
 describe('initGame()', () => {
   const setUp = (configOverwrite) => {
@@ -43,7 +48,9 @@ describe('initGame()', () => {
     expect(mockCalls[0]).toEqual([{
       secretCode: expect.anything(),
       currRound: 'placeholder',
-      rounds: [{}]
+      rounds: {
+        'placeholder': {}
+      }
     }])
   })
 
@@ -117,8 +124,8 @@ describe('initNewRound()', () => {
     expect(currRound).toBe(1)
 
     expect(newRoundObj).toEqual({
-      id: 1,
-      secretCode: {}
+      id: '1',
+      playerCode: {}
     })
   })
 
@@ -128,8 +135,99 @@ describe('initNewRound()', () => {
     expect(currRound).toBe(2)
 
     expect(newRoundObj).toEqual({
-      id: 2,
-      secretCode: {}
+      id: '2',
+      playerCode: {}
+    })
+  })
+})
+
+describe('addColorToRound', () => {
+  const setUp = (configOverwrite) => {
+    const config = {
+      stateSetterFnc: jest.fn(),
+      currRound: '2',
+      rounds: {
+        '1': {
+          id: '1',
+          playerCode: {
+            color1: '#324234',
+            color2: '#324234',
+            color3: '#324234',
+            color4: '#324234'
+          }
+        },
+        '2': {
+          id: '2',
+          playerCode: {
+            color1: '#324234',
+            color2: '#324234'
+          }
+        }
+      },
+      color: '#2daae2',
+      position: 'color1',
+      ...configOverwrite
+    }
+
+    const result = addColorToRound(config)
+
+    return {
+      config,
+      result
+    }
+  }
+
+  it('should return updated state', () => {
+    const { result } = setUp()
+
+    expect(result).toEqual({
+      rounds: {
+        '1': {
+          id: '1',
+          playerCode: {
+            color1: '#324234',
+            color2: '#324234',
+            color3: '#324234',
+            color4: '#324234'
+          }
+        },
+        '2': {
+          id: '2',
+          playerCode: {
+            color1: '#2daae2',
+            color2: '#324234'
+          }
+        }
+      }
+    })
+  })
+
+  it('should call setState with correct argument', () => {
+    const { stateSetterFnc } = setUp().config
+
+    // check if setStateMock has been called exactly once
+    expect(stateSetterFnc.mock.calls.length).toBe(1)
+
+    // check if setSTateMock has been called with right argument
+    expect(stateSetterFnc.mock.calls[0][0]).toEqual({
+      rounds: {
+        '1': {
+          id: '1',
+          playerCode: {
+            color1: '#324234',
+            color2: '#324234',
+            color3: '#324234',
+            color4: '#324234'
+          }
+        },
+        '2': {
+          id: '2',
+          playerCode: {
+            color1: '#2daae2',
+            color2: '#324234'
+          }
+        }
+      }
     })
   })
 })
