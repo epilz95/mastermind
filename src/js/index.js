@@ -5,67 +5,21 @@ import 'normalize.css'
 // $FlowFixMe
 import '../sass/main.scss'
 
-type Color = {|
-  name: string,
-  color: string
-|}
+import type {
+  Colors
+} from './types'
 
-type Colors = Array<Color>
+import { COLORS } from './config'
 
-type ColorPosition = string
-type ColorHex = string
+import { setState, store } from './store'
 
-type ColorCode = { [ColorPosition]: ColorHex }
-
-const COLORS: Colors = [
-  {
-    name: 'lemon',
-    color: '#f93b19'
-  },
-  {
-    name: 'citron',
-    color: '#97c11f'
-  },
-  {
-    name: 'salem',
-    color: '#0d8f35'
-  },
-  {
-    name: 'picton-blue',
-    color: '#2daae2'
-  },
-  {
-    name: 'denim',
-    color: '#1071b8'
-  },
-  {
-    name: 'port-gore',
-    color: '#28235d'
-  },
-  {
-    name: 'thunderbird',
-    color: '#bf1522'
-  },
-  {
-    name: 'tangerine',
-    color: '#f29200'
-  }
-]
-
-let store = {
-  paletNode: undefined,
-  secretCode: {},
-  currRound: undefined,
-  rounds: {}
-}
-
-const setState = (newState) => {
-  store = { ...store, ...newState }
-
-  return newState
-}
-
-const getRandomColor = (array: Colors): Color => array[Math.floor(Math.random() * array.length)]
+import {
+  addColorToRound,
+  checkCodeLength,
+  convertToColorCode,
+  generateCode,
+  initNewRound
+} from './gameLogic'
 
 const showColorPalet = (e, colorPalet: ?HTMLElement, codeNode: ?HTMLElement) => {
   e.stopPropagation()
@@ -89,41 +43,6 @@ const showColorPalet = (e, colorPalet: ?HTMLElement, codeNode: ?HTMLElement) => 
       window.scrollY
     }px`
   }
-}
-
-export const addColorToRound = ({
-  currRound,
-  rounds,
-  stateSetterFnc,
-  color,
-  position
-}: {
-  currRound: number,
-  rounds: Object,
-  stateSetterFnc: Function,
-  color: string,
-  position: string
-}) => {
-  const currRoundStr = currRound.toString()
-  const currRoundObj = rounds[currRoundStr]
-  const currPlayerCode = currRoundObj.playerCode
-
-  const newState = {
-    rounds: {
-      ...rounds,
-      [currRoundStr]: {
-        ...currRoundObj,
-        playerCode: {
-          ...currPlayerCode,
-          [position]: color
-        }
-      }
-    }
-  }
-
-  stateSetterFnc(newState)
-
-  return newState
 }
 
 const setColor = (e) => {
@@ -154,46 +73,6 @@ const hideColorPalet = (colorPalet: ?HTMLElement) => {
   if (colorPalet) colorPalet.style.display = 'none'
 }
 
-export const convertToColorCode = (colors: Colors): ColorCode => {
-  return colors.reduce((acc, c, i) => {
-    const position = i + 1
-    return {
-      ...acc,
-      [`color${position.toString()}`]: c.color
-    }
-  }, {})
-}
-
-export const generateCode = (
-  colors: Colors,
-  count: number,
-  init: Array<Color> = []
-): Colors => {
-  if (count <= 0) return init
-
-  const result = [ ...init, getRandomColor(colors) ]
-
-  return generateCode(colors, count - 1, result)
-}
-
-export const initNewRound = (currRound: ?number) => {
-  const isFirstRound = typeof currRound === 'undefined'
-
-  const newRound = isFirstRound
-    ? 1
-    : currRound + 1
-
-  const newRoundObj = {
-    id: newRound.toString(),
-    playerCode: {}
-  }
-
-  return {
-    currRound: newRound,
-    newRoundObj
-  }
-}
-
 export const initGame = ({
   stateSetterFnc,
   codeGenFnc,
@@ -215,10 +94,6 @@ export const initGame = ({
     currRound: newRound.currRound,
     rounds: { [newRound.currRound.toString()]: newRound.newRoundObj }
   })
-}
-
-export const checkCodeLength = (playerCode: Object) => {
-  return Object.keys(playerCode).length === 4
 }
 
 const addListeners = (): void => {
@@ -303,7 +178,6 @@ const addListeners = (): void => {
           [newRound.currRound.toString()]: newRound.newRoundObj
         }
       })
-      console.log({ store, currRound })
     })
   }
 }
