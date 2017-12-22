@@ -157,6 +157,7 @@ const addListeners = (): void => {
 
       if (!isValidCode) return
 
+      // TODO
       // compare player code with secret code
 
       // --> show hints for current round

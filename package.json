@@ -29,7 +29,7 @@
     "test:clean": "rimraf ./coverage",
     "pretest": "npm run test:clean",
     "test": "cross-env NODE_ENV=test jest --coverage",
-    "test:watch": "cross-env NODE_ENV=test jest --coverage --watch",
+    "test:watch": "cross-env NODE_ENV=test jest --watch",
     "lintAndTest": "npm run test:clean && npm run lint && npm run stylelint && npm run test",
     "coveralls": "cross-env NODE_ENV=test jest --coverage --runInBand && cat ./coverage/lcov.info | coveralls",
     "svg-sprite": "rimraf src/img/sprite.svg && svg-sprite --config svg-sprite.json src/img/**/*.svg"
