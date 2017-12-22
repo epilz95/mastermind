@@ -8,17 +8,19 @@ import {
    } from '../index'
 
 describe('initGame()', () => {
+  const colors = [ { color: '#ffffff' }, { color: '#000000' } ]
+
   const setUp = (configOverwrite) => {
     const config = {
       stateSetterFnc: () => {},
-      codeGenFnc: () => 'placeholder',
+      codeGenFnc: () => colors,
       roundInitializer: () => {
         return {
           currRound: 'placeholder',
           newRoundObj: {}
         }
       },
-      colorPalet: [],
+      colorPalet: colors,
       ...configOverwrite
     }
 
@@ -32,7 +34,7 @@ describe('initGame()', () => {
 
   it('should call code generator', () => {
     const { config } = setUp({
-      codeGenFnc: jest.fn()
+      codeGenFnc: jest.fn().mockReturnValue(colors)
     })
 
     expect(config.codeGenFnc.mock.calls.length).toBe(1)
