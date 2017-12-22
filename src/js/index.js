@@ -178,6 +178,8 @@ const addListeners = (): void => {
           [newRound.currRound.toString()]: newRound.newRoundObj
         }
       })
+
+      console.log({ store })
     })
   }
 }

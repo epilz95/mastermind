@@ -3,7 +3,8 @@
 import type {
   Color,
   Colors,
-  ColorCode
+  ColorCode,
+  Hints
 } from './types'
 
 export const getRandomColor = (array: Colors): Color => array[Math.floor(Math.random() * array.length)]
@@ -85,4 +86,15 @@ export const initNewRound = (currRound: ?number) => {
 
 export const checkCodeLength = (playerCode: Object) => {
   return Object.keys(playerCode).length === 4
+}
+
+export const compareCodes = (playerCode: ColorCode, secretCode: ColorCode): {|
+  isCorrect: boolean,
+  hints: Hints
+|} => {
+  // TODO
+  return {
+    isCorrect: false,
+    hints: [ null, null, null, null ]
+  }
 }

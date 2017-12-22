@@ -1,9 +1,10 @@
 import {
-  generateCode,
-  initNewRound,
   addColorToRound,
   checkCodeLength,
-  convertToColorCode
+  compareCodes,
+  convertToColorCode,
+  generateCode,
+  initNewRound
 } from '../gameLogic'
 
 import { COLORS } from '../config'
@@ -22,7 +23,7 @@ describe('generateCode()', () => {
       expect(COLORS.find((el) => el.name === i.name)).not.toBe(undefined)
     })
   })
-})
+}) // end generateCode()
 
 describe('initNewRound()', () => {
   it('should return first round if current round is undefined', () => {
@@ -46,7 +47,7 @@ describe('initNewRound()', () => {
       playerCode: {}
     })
   })
-})
+}) // end initNewRound()
 
 describe('addColorToRound', () => {
   const setUp = (configOverwrite) => {
@@ -137,7 +138,7 @@ describe('addColorToRound', () => {
       }
     })
   })
-})
+}) // end addColorToRound()
 
 describe('checkCodeLength', () => {
   it('should return true if playerCode has 4 items', () => {
@@ -159,7 +160,7 @@ describe('checkCodeLength', () => {
 
     expect(checkCodeLength(playerCode)).toBe(false)
   })
-})
+}) // end checkCodeLength()
 
 describe('converToColorCode()', () => {
   it('should convert array of colors to colocCode object', () => {
@@ -171,4 +172,186 @@ describe('converToColorCode()', () => {
       color2: '#def'
     })
   })
-})
+}) // end convertToColorCode()
+
+describe('compareCodes()', () => {
+  it('should return hints as an array of nulls if no color is correct', () => {
+    const playerCode = {
+      color1: 'blue',
+      color2: 'red',
+      color3: 'green',
+      color4: 'orange'
+    }
+
+    const secretCode = {
+      color1: 'purple',
+      color2: 'yellow',
+      color3: 'darkgreen',
+      color4: 'black'
+    }
+
+    const { hints } = compareCodes(playerCode, secretCode)
+
+    expect(hints).toEqual([ null, null, null, null ])
+  })
+
+  it('should return hints with one "white" if one color is correct at the wrong position', () => {
+    const playerCode = {
+      color1: 'blue',
+      color2: 'red',
+      color3: 'green',
+      color4: 'orange'
+    }
+
+    const secretCode = {
+      color1: 'purple',
+      color2: 'blue',
+      color3: 'darkgreen',
+      color4: 'black'
+    }
+
+    const { hints } = compareCodes(playerCode, secretCode)
+
+    expect(hints).toEqual([ 'white', null, null, null ])
+  })
+
+  it('should return hints with one "black" if one color is correct at the right position', () => {
+    const playerCode = {
+      color1: 'blue',
+      color2: 'red',
+      color3: 'green',
+      color4: 'orange'
+    }
+
+    const secretCode = {
+      color1: 'purple',
+      color2: 'red',
+      color3: 'darkgreen',
+      color4: 'black'
+    }
+
+    const { hints } = compareCodes(playerCode, secretCode)
+
+    expect(hints).toEqual([ 'black', null, null, null ])
+  })
+
+  it('should return hints with four "white" if all colors are correct, but at the wrong position', () => {
+    const playerCode = {
+      color1: 'red',
+      color2: 'purple',
+      color3: 'black',
+      color4: 'darkgreen'
+    }
+
+    const secretCode = {
+      color1: 'purple',
+      color2: 'red',
+      color3: 'darkgreen',
+      color4: 'black'
+    }
+
+    const { hints } = compareCodes(playerCode, secretCode)
+
+    expect(hints).toEqual([ 'white', 'white', 'white', 'white' ])
+  })
+
+  it('should return hints with four "black" if all colors are correct at the right position', () => {
+    const playerCode = {
+      color1: 'purple',
+      color2: 'red',
+      color3: 'darkgreen',
+      color4: 'black'
+    }
+
+    const secretCode = {
+      color1: 'purple',
+      color2: 'red',
+      color3: 'darkgreen',
+      color4: 'black'
+    }
+
+    const { hints } = compareCodes(playerCode, secretCode)
+
+    expect(hints).toEqual([ 'black', 'black', 'black', 'black' ])
+  })
+
+  it('should return hints with one "white" and one "black" if one colors is correct at the wrong position and one is correct at the right position', () => {
+    const playerCode = {
+      color1: 'green',
+      color2: 'orange',
+      color3: 'darkgreen',
+      color4: 'purple'
+    }
+
+    const secretCode = {
+      color1: 'purple',
+      color2: 'red',
+      color3: 'darkgreen',
+      color4: 'black'
+    }
+
+    const { hints } = compareCodes(playerCode, secretCode)
+
+    expect(hints).toEqual([ 'black', 'white', null, null ])
+  })
+
+  it('should evaluate color doubles separately', () => {
+    const playerCode = {
+      color1: 'green',
+      color2: 'green',
+      color3: 'orange',
+      color4: 'purple'
+    }
+
+    const secretCode = {
+      color1: 'green',
+      color2: 'red',
+      color3: 'green',
+      color4: 'black'
+    }
+
+    const { hints } = compareCodes(playerCode, secretCode)
+
+    expect(hints).toEqual([ 'black', 'white', null, null ])
+  })
+
+  it('should return isCorrect === false if codes don\'t match', () => {
+    const playerCode = {
+      color1: 'green',
+      color2: 'green',
+      color3: 'orange',
+      color4: 'purple'
+    }
+
+    const secretCode = {
+      color1: 'green',
+      color2: 'red',
+      color3: 'green',
+      color4: 'black'
+    }
+
+    const { isCorrect } = compareCodes(playerCode, secretCode)
+
+    expect(isCorrect).toBe(false)
+  })
+
+  it('should return isCorrect === true if codes match', () => {
+    const playerCode = {
+      color1: 'green',
+      color2: 'red',
+      color3: 'green',
+      color4: 'black'
+    }
+
+    const secretCode = {
+      color1: 'green',
+      color2: 'red',
+      color3: 'green',
+      color4: 'black'
+    }
+
+    const { isCorrect } = compareCodes(playerCode, secretCode)
+
+    expect(isCorrect).toBe(true)
+  })
+}) // end compareCodes()
