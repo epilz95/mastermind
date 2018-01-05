@@ -1,6 +1,8 @@
 import {
   addColorToRound,
   checkCodeLength,
+  checkColorAndPosition,
+  checkColors,
   compareCodes,
   convertToColorCode,
   generateCode,
@@ -275,7 +277,7 @@ describe('compareCodes()', () => {
     expect(hints).toEqual([ 'black', 'black', 'black', 'black' ])
   })
 
-  it('should return hints with one "white" and one "black" if one colors is correct at the wrong position and one is correct at the right position', () => {
+  it('should return hints with one "white" and one "black" if one color is correct at the wrong position and one is correct at the right position', () => {
     const playerCode = {
       color1: 'green',
       color2: 'orange',
@@ -355,3 +357,97 @@ describe('compareCodes()', () => {
     expect(isCorrect).toBe(true)
   })
 }) // end compareCodes()
+
+describe('checkColorAndPosition()', () => {
+  const setUp = (playerCodeOW, secretCodeOW) => {
+    const playerCode = {
+      color1: 'green',
+      color2: 'red',
+      color3: 'green',
+      color4: 'black',
+      ...playerCodeOW
+    }
+
+    const secretCode = {
+      color1: 'yellow',
+      color2: 'blue',
+      color3: 'red',
+      color4: 'green',
+      ...secretCodeOW
+    }
+
+    const result = checkColorAndPosition(playerCode, secretCode)
+
+    return {
+      result,
+      playerCode,
+      secretCode
+    }
+  }
+
+  it('should return both codes unaltered and empty array if there is no match with color and position', () => {
+    const { result, playerCode, secretCode } = setUp()
+
+    expect(result).toEqual({
+      newPlayerCode: playerCode,
+      newSecretCode: secretCode,
+      blacks: []
+    })
+  })
+
+  it('should return both codes without matching entries and array with correct amount of matches', () => {
+    const { result } = setUp({ color1: 'yellow', color2: 'blue' })
+
+    const newPlayerCode = { color3: 'green', color4: 'black' }
+    const newSecretCode = { color3: 'red', color4: 'green' }
+    const blacks = [ 'black', 'black' ]
+
+    expect(result).toEqual({
+      newPlayerCode,
+      newSecretCode,
+      blacks
+    })
+  })
+}) // end checkColorAndPosition()
+
+describe('checkColors()', () => {
+  const setUp = (playerCodeOW, secretCodeOW) => {
+    const playerCode = {
+      color1: 'purple',
+      color2: 'red',
+      color3: 'green',
+      color4: 'black',
+      ...playerCodeOW
+    }
+
+    const secretCode = {
+      color1: 'cyan',
+      color2: 'blue',
+      color3: 'white',
+      color4: 'yellow',
+      ...secretCodeOW
+    }
+
+    const whites = checkColors(playerCode, secretCode)
+
+    return whites
+  }
+
+  it('should return empty result array if there are no matches', () => {
+    const { whites } = setUp()
+
+    expect(whites).toEqual([])
+  })
+
+  it('should return correct amount of matches without duplicates inside result array', () => {
+    const { whites } = setUp({ color2: 'white', color3: 'blue' })
+
+    expect(whites).toEqual([ 'white', 'white' ])
+  })
+
+  it('should return correct amount of matches with duplicates inside result array', () => {
+    const { whites } = setUp({ color1: 'white', color2: 'white' }, { color4: 'white' })
+
+    expect(whites).toEqual([ 'white', 'white' ])
+  })
+}) // end checkColors()

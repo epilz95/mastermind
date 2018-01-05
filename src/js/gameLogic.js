@@ -93,8 +93,24 @@ export const compareCodes = (playerCode: ColorCode, secretCode: ColorCode): {|
   hints: Hints
 |} => {
   // TODO
+  const { newPlayerCode, newSecretCode, blacks } = checkColorAndPosition(playerCode, secretCode)
+  const { whites } = checkColors(newPlayerCode, newSecretCode)
+
+  // TODO gen array from whites and blacks
+
   return {
     isCorrect: false,
     hints: [ null, null, null, null ]
   }
 }
+
+export const checkColorAndPosition = (playerCode: ColorCode, secretCode: ColorCode) => {
+  // return playerCode, secretCode, Object with number of black matches (for the hints array)
+}
+
+export const checkColors = (playerCode: ColorCode, secretCode: ColorCode) => {
+  // convert code Objects to array?
+  // return Object with number of white matches (for the hints array)
+}
+
+// create the hints array: number of black matches, number of white matches, number resting to 4

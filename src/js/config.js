@@ -5,7 +5,7 @@ import type { Colors } from './types'
 export const COLORS: Colors = [
   {
     name: 'lemon',
-    color: '#f93b19'
+    color: '#f9eb19'
   },
   {
     name: 'citron',

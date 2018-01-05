@@ -18,7 +18,8 @@ import {
   checkCodeLength,
   convertToColorCode,
   generateCode,
-  initNewRound
+  initNewRound,
+  compareCodes
 } from './gameLogic'
 
 const showColorPalet = (e, colorPalet: ?HTMLElement, codeNode: ?HTMLElement) => {
@@ -137,7 +138,7 @@ const addListeners = (): void => {
 
   if (buttonCheck) {
     buttonCheck.addEventListener('click', () => {
-      const { currRound, rounds } = store
+      const { currRound, rounds, secretCode } = store
       const currRoundObj = currRound
         ? rounds[currRound]
         : undefined
@@ -159,6 +160,7 @@ const addListeners = (): void => {
 
       // TODO
       // compare player code with secret code
+      compareCodes(playerCode, secretCode)
 
       // --> show hints for current round
 
