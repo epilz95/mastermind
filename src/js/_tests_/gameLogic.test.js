@@ -177,7 +177,7 @@ describe('converToColorCode()', () => {
 }) // end convertToColorCode()
 
 describe('compareCodes()', () => {
-  it('should return hints as an array of nulls if no color is correct', () => {
+  it('should return hints as an empty array if no color is correct', () => {
     const playerCode = {
       color1: 'blue',
       color2: 'red',
@@ -194,7 +194,7 @@ describe('compareCodes()', () => {
 
     const { hints } = compareCodes(playerCode, secretCode)
 
-    expect(hints).toEqual([ null, null, null, null ])
+    expect(hints).toEqual([])
   })
 
   it('should return hints with one "white" if one color is correct at the wrong position', () => {
@@ -214,7 +214,7 @@ describe('compareCodes()', () => {
 
     const { hints } = compareCodes(playerCode, secretCode)
 
-    expect(hints).toEqual([ 'white', null, null, null ])
+    expect(hints).toEqual([ 'white' ])
   })
 
   it('should return hints with one "black" if one color is correct at the right position', () => {
@@ -234,7 +234,7 @@ describe('compareCodes()', () => {
 
     const { hints } = compareCodes(playerCode, secretCode)
 
-    expect(hints).toEqual([ 'black', null, null, null ])
+    expect(hints).toEqual([ 'black' ])
   })
 
   it('should return hints with four "white" if all colors are correct, but at the wrong position', () => {
@@ -294,7 +294,7 @@ describe('compareCodes()', () => {
 
     const { hints } = compareCodes(playerCode, secretCode)
 
-    expect(hints).toEqual([ 'black', 'white', null, null ])
+    expect(hints).toEqual([ 'black', 'white' ])
   })
 
   it('should evaluate color doubles separately', () => {
@@ -314,7 +314,7 @@ describe('compareCodes()', () => {
 
     const { hints } = compareCodes(playerCode, secretCode)
 
-    expect(hints).toEqual([ 'black', 'white', null, null ])
+    expect(hints).toEqual([ 'black', 'white' ])
   })
 
   it('should return isCorrect === false if codes don\'t match', () => {
@@ -389,8 +389,8 @@ describe('checkColorAndPosition()', () => {
     const { result, playerCode, secretCode } = setUp()
 
     expect(result).toEqual({
-      newPlayerCode: playerCode,
-      newSecretCode: secretCode,
+      playerCode,
+      secretCode,
       blacks: []
     })
   })
@@ -398,13 +398,13 @@ describe('checkColorAndPosition()', () => {
   it('should return both codes without matching entries and array with correct amount of matches', () => {
     const { result } = setUp({ color1: 'yellow', color2: 'blue' })
 
-    const newPlayerCode = { color3: 'green', color4: 'black' }
-    const newSecretCode = { color3: 'red', color4: 'green' }
+    const playerCode = { color3: 'green', color4: 'black' }
+    const secretCode = { color3: 'red', color4: 'green' }
     const blacks = [ 'black', 'black' ]
 
     expect(result).toEqual({
-      newPlayerCode,
-      newSecretCode,
+      playerCode,
+      secretCode,
       blacks
     })
   })
@@ -434,19 +434,19 @@ describe('checkColors()', () => {
   }
 
   it('should return empty result array if there are no matches', () => {
-    const { whites } = setUp()
+    const whites = setUp()
 
     expect(whites).toEqual([])
   })
 
   it('should return correct amount of matches without duplicates inside result array', () => {
-    const { whites } = setUp({ color2: 'white', color3: 'blue' })
+    const whites = setUp({ color2: 'white', color3: 'blue' })
 
     expect(whites).toEqual([ 'white', 'white' ])
   })
 
   it('should return correct amount of matches with duplicates inside result array', () => {
-    const { whites } = setUp(
+    const whites = setUp(
       { color1: 'white', color2: 'white' },
        { color3: 'white', color4: 'white' }
     )

@@ -1,6 +1,6 @@
 // @flow
 
-import { immutablyDeleteProperty } from 'functionstein'
+import { immutablyDeleteProperty, objToArray } from 'functionstein'
 
 import type {
   Color,
@@ -90,51 +90,81 @@ export const checkCodeLength = (playerCode: Object) => {
   return Object.keys(playerCode).length === 4
 }
 
-export const compareCodes = (playerCode: ColorCode, secretCode: ColorCode): {|
-  isCorrect: boolean,
-  hints: Hints
-|} => {
-  // TODO
-  const { newPlayerCode, newSecretCode, blacks } = checkColorAndPosition(playerCode, secretCode)
-  const { whites } = checkColors(newPlayerCode, newSecretCode)
-
-  // TODO gen array from whites and blacks
-
-  return {
-    isCorrect: false,
-    hints: [ null, null, null, null ]
-  }
-}
-
 export const checkColorAndPosition = (playerCode: ColorCode, secretCode: ColorCode) => {
   return Object.keys(playerCode)
     .reduce((acc, k) => {
       const isMatch = playerCode[k] === secretCode[k]
       const newPlayerCode = isMatch
-        ? immutablyDeleteProperty(acc.newPlayerCode, k)
-        : acc.newPlayerCode
+        ? immutablyDeleteProperty(acc.playerCode, k)
+        : acc.playerCode
       const newSecretCode = isMatch
-        ? immutablyDeleteProperty(acc.newSecretCode, k)
-        : acc.newSecretCode
+        ? immutablyDeleteProperty(acc.secretCode, k)
+        : acc.secretCode
       const blacks = isMatch
         ? [ ...acc.blacks, 'black' ]
         : acc.blacks
 
       return {
-        newPlayerCode,
-        newSecretCode,
+        playerCode: newPlayerCode,
+        secretCode: newSecretCode,
         blacks
       }
     }, {
-      newPlayerCode: playerCode,
-      newSecretCode: secretCode,
+      playerCode,
+      secretCode,
       blacks: []
     })
 }
 
 export const checkColors = (playerCode: ColorCode, secretCode: ColorCode) => {
-  // convert code Objects to array?
-  // return Object with number of white matches (for the hints array)
+  const arrPlayer = objToArray(playerCode)
+  const arrSecret = objToArray(secretCode)
+
+  const whites = arrPlayer.reduce((acc, val, i, arr) => {
+    const firstMatch = acc.arrSecret.indexOf(val)
+    const hasMatch = firstMatch !== -1
+
+    const newArrSecret = hasMatch
+      ? [ ...acc.arrSecret.slice(0, firstMatch), ...acc.arrSecret.slice(firstMatch + 1) ]
+      : acc.arrSecret
+
+    const whites = hasMatch
+      ? [ ...acc.whites, 'white' ]
+      : acc.whites
+
+    if (i < arr.length - 1) {
+      return {
+        arrSecret: newArrSecret,
+        whites
+      }
+    }
+
+    return whites
+  }, {
+    arrSecret,
+    whites: []
+  })
+
+  return whites
 }
 
-// create the hints array: number of black matches, number of white matches, number resting to 4
+export const compareCodes = (playerCode: ColorCode, secretCode: ColorCode): {|
+  isCorrect: boolean,
+  hints: Hints
+|} => {
+  const result = checkColorAndPosition(playerCode, secretCode)
+  const { blacks } = result
+  const newPlayerCode = result.playerCode
+  const newSecretCode = result.secretCode
+
+  const whites = checkColors(newPlayerCode, newSecretCode)
+
+  const isCorrect = blacks.length === 4
+
+  const hints = [ ...blacks, ...whites ]
+
+  return {
+    isCorrect,
+    hints
+  }
+}
