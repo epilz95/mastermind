@@ -446,7 +446,10 @@ describe('checkColors()', () => {
   })
 
   it('should return correct amount of matches with duplicates inside result array', () => {
-    const { whites } = setUp({ color1: 'white', color2: 'white' }, { color4: 'white' })
+    const { whites } = setUp(
+      { color1: 'white', color2: 'white' },
+       { color3: 'white', color4: 'white' }
+    )
 
     expect(whites).toEqual([ 'white', 'white' ])
   })

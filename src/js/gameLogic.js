@@ -1,5 +1,7 @@
 // @flow
 
+import { immutablyDeleteProperty } from 'functionstein'
+
 import type {
   Color,
   Colors,
@@ -105,7 +107,29 @@ export const compareCodes = (playerCode: ColorCode, secretCode: ColorCode): {|
 }
 
 export const checkColorAndPosition = (playerCode: ColorCode, secretCode: ColorCode) => {
-  // return playerCode, secretCode, Object with number of black matches (for the hints array)
+  return Object.keys(playerCode)
+    .reduce((acc, k) => {
+      const isMatch = playerCode[k] === secretCode[k]
+      const newPlayerCode = isMatch
+        ? immutablyDeleteProperty(acc.newPlayerCode, k)
+        : acc.newPlayerCode
+      const newSecretCode = isMatch
+        ? immutablyDeleteProperty(acc.newSecretCode, k)
+        : acc.newSecretCode
+      const blacks = isMatch
+        ? [ ...acc.blacks, 'black' ]
+        : acc.blacks
+
+      return {
+        newPlayerCode,
+        newSecretCode,
+        blacks
+      }
+    }, {
+      newPlayerCode: playerCode,
+      newSecretCode: secretCode,
+      blacks: []
+    })
 }
 
 export const checkColors = (playerCode: ColorCode, secretCode: ColorCode) => {
