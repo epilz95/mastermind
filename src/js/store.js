@@ -2,6 +2,7 @@
 
 export let store = {
   paletNode: undefined,
+  currRowNode: undefined,
   secretCode: {},
   currRound: undefined,
   rounds: {}

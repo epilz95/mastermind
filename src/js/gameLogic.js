@@ -163,8 +163,38 @@ export const compareCodes = (playerCode: ColorCode, secretCode: ColorCode): {|
 
   const hints = [ ...blacks, ...whites ]
 
+  // console.log({playerCode}, {secretCode}, {isCorrect}, {hints})
+
   return {
     isCorrect,
     hints
   }
+}
+
+export const displayHints = (playerCode: ColorCode, secretCode: ColorCode) => {
+  const result = compareCodes(playerCode, secretCode)
+  const hints = result.hints
+  let newHints = []
+
+  // if (result.isCorrect)
+
+  if (hints.length === 0) {
+    newHints = [ -1, -1, -1, -1 ]
+  } else if (hints.length === 1) {
+    newHints = [ ...hints, -1, -1, -1 ]
+  } else if (hints.length === 2) {
+    newHints = [ ...hints, -1, -1 ]
+  } else if (hints.length === 3) {
+    newHints = [ ...hints, -1 ]
+  } else {
+    newHints = [ ...hints ]
+  }
+
+  const convertedHints = newHints.map(hint => {
+    if (hint === 'black') return 1
+    if (hint === 'white') return 0
+    if (hint === -1) return -1
+  })
+
+  console.log({hints}, {newHints}, {convertedHints})
 }

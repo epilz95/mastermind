@@ -19,7 +19,8 @@ import {
   convertToColorCode,
   generateCode,
   initNewRound,
-  compareCodes
+  compareCodes,
+  displayHints
 } from './gameLogic'
 
 const showColorPalet = (e, colorPalet: ?HTMLElement, codeNode: ?HTMLElement) => {
@@ -163,6 +164,15 @@ const addListeners = (): void => {
       compareCodes(playerCode, secretCode)
 
       // --> show hints for current round
+      if (store.paletNode) {
+        setState({ currRowNode: store.paletNode.parentNode.parentNode })
+
+        const hintNodes = store.currRowNode.querySelectorAll('.result')
+
+        console.log(hintNodes)
+
+        displayHints(playerCode, secretCode)
+      }
 
       // if player code === secret code
         // --> end game 'win'
