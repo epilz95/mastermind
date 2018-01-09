@@ -106,17 +106,18 @@
     "name": "Eva-Maria Pilz",
     "email": "eva-maria.pilz@4so.de"
   },
-  "contributors": [ ],
+  "contributors": [],
   "homepage": "http://gitlab.4so.local/4so/dev/mastermind",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
+    "functionstein": "1.6.1",
     "normalize.css": "^7.0.0"
   },
   "engines": {},
   "devDependencies": {
     "autoprefixer": "^7.1.5",
     "babel-core": "^6.26.0",
-    "babel-eslint": "^8.0.1",
+    "babel-eslint": "8.0.1",
     "babel-jest": "^21.2.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
