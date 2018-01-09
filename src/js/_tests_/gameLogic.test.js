@@ -6,7 +6,8 @@ import {
   compareCodes,
   convertToColorCode,
   generateCode,
-  initNewRound
+  initNewRound,
+  fillWithNones
 } from '../gameLogic'
 
 import { COLORS } from '../config'
@@ -454,3 +455,11 @@ describe('checkColors()', () => {
     expect(whites).toEqual([ 'white', 'white' ])
   })
 }) // end checkColors()
+
+describe('fillWithNones()', () => {
+  it('should fill hint-array with \'none\' values until total length is reached', () => {
+    const result = fillWithNones([ 'black', 'black' ], 4)
+
+    expect(result).toEqual([ 'black', 'black', 'none', 'none' ])
+  })
+})

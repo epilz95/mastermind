@@ -169,30 +169,8 @@ export const compareCodes = (playerCode: ColorCode, secretCode: ColorCode): {|
   }
 }
 
-export const convertHints = (playerCode: ColorCode, secretCode: ColorCode) => {
-  const result = compareCodes(playerCode, secretCode)
-  const hints = result.hints
-  let convertedHints = [ ...hints ]
+export const fillWithNones = (hints: Hints, totalLength: number): Hints => {
+  if (hints.length === totalLength) return hints
 
-  while (convertedHints.length < 4) convertedHints.push('none')
-
-  return convertedHints
-}
-
-export const displayHints = (playerCode: ColorCode, secretCode: ColorCode, hintNodesArray: ?Array<any>) => {
-  const convertedHints = convertHints(playerCode, secretCode)
-
-  console.log({convertedHints}, {hintNodesArray})
-
-  const resultsWithClass = convertedHints.reduce((acc, val, i) => {
-    let className
-
-    if (val === 'black') className = 'success'
-    if (val === 'white') className = 'halfway'
-    if (val === 'none') className = 'fail'
-
-    if (hintNodesArray) hintNodesArray[i].classList.add(className)
-  })
-
-  return resultsWithClass
+  return fillWithNones([ ...hints, 'none' ], totalLength)
 }

@@ -6,6 +6,7 @@ import 'normalize.css'
 import '../sass/main.scss'
 
 import type {
+  Hints,
   Colors
 } from './types'
 
@@ -20,7 +21,7 @@ import {
   generateCode,
   initNewRound,
   compareCodes,
-  displayHints
+  fillWithNones
 } from './gameLogic'
 
 const showColorPalet = (e, colorPalet: ?HTMLElement, codeNode: ?HTMLElement) => {
@@ -98,6 +99,30 @@ export const initGame = ({
   })
 }
 
+export const displayHints = (hints: Hints, hintNodesArray: ?Array<any>) => {
+  hints.forEach((h, i) => {
+    if (!hintNodesArray) return
+
+    const currentNode = hintNodesArray[i]
+
+    if (!currentNode) return
+
+    if (h === 'black') {
+      currentNode.classList.add('success')
+      return
+    }
+
+    if (h === 'white') {
+      currentNode.classList.add('halfway')
+      return
+    }
+
+    if (h === 'none') {
+      currentNode.classList.add('fail')
+    }
+  })
+}
+
 const addListeners = (): void => {
   const positionNodes = document.querySelectorAll('.position')
   const colorPaletNode = document.querySelector('.color-palet')
@@ -161,7 +186,7 @@ const addListeners = (): void => {
 
       // TODO
       // compare player code with secret code
-      compareCodes(playerCode, secretCode)
+      const { hints, isCorrect } = compareCodes(playerCode, secretCode)
 
       // --> show hints for current round
       if (store.paletNode) {
@@ -169,9 +194,12 @@ const addListeners = (): void => {
 
         const hintNodesArray = Array.from(store.currRowNode.querySelectorAll('.result'))
 
-        displayHints(playerCode, secretCode, hintNodesArray)
+        const convertedHints = fillWithNones(hints, 4)
+
+        displayHints(convertedHints, hintNodesArray)
       }
 
+      console.log({ isCorrect })
       // if player code === secret code
         // --> end game 'win'
 
