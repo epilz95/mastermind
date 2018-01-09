@@ -167,11 +167,9 @@ const addListeners = (): void => {
       if (store.paletNode) {
         setState({ currRowNode: store.paletNode.parentNode.parentNode })
 
-        const hintNodes = store.currRowNode.querySelectorAll('.result')
+        const hintNodesArray = Array.from(store.currRowNode.querySelectorAll('.result'))
 
-        console.log(hintNodes)
-
-        displayHints(playerCode, secretCode)
+        displayHints(playerCode, secretCode, hintNodesArray)
       }
 
       // if player code === secret code

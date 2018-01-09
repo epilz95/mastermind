@@ -12,5 +12,5 @@ export type ColorHex = string
 
 export type ColorCode = { [ColorPosition]: ColorHex }
 
-export type Hint = 'white' | 'black'
+export type Hint = 'white' | 'black' | 'none'
 export type Hints = Array<Hint | null>

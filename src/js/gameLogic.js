@@ -163,38 +163,36 @@ export const compareCodes = (playerCode: ColorCode, secretCode: ColorCode): {|
 
   const hints = [ ...blacks, ...whites ]
 
-  // console.log({playerCode}, {secretCode}, {isCorrect}, {hints})
-
   return {
     isCorrect,
     hints
   }
 }
 
-export const displayHints = (playerCode: ColorCode, secretCode: ColorCode) => {
+export const convertHints = (playerCode: ColorCode, secretCode: ColorCode) => {
   const result = compareCodes(playerCode, secretCode)
   const hints = result.hints
-  let newHints = []
+  let convertedHints = [ ...hints ]
 
-  // if (result.isCorrect)
+  while (convertedHints.length < 4) convertedHints.push('none')
 
-  if (hints.length === 0) {
-    newHints = [ -1, -1, -1, -1 ]
-  } else if (hints.length === 1) {
-    newHints = [ ...hints, -1, -1, -1 ]
-  } else if (hints.length === 2) {
-    newHints = [ ...hints, -1, -1 ]
-  } else if (hints.length === 3) {
-    newHints = [ ...hints, -1 ]
-  } else {
-    newHints = [ ...hints ]
-  }
+  return convertedHints
+}
 
-  const convertedHints = newHints.map(hint => {
-    if (hint === 'black') return 1
-    if (hint === 'white') return 0
-    if (hint === -1) return -1
+export const displayHints = (playerCode: ColorCode, secretCode: ColorCode, hintNodesArray: ?Array<any>) => {
+  const convertedHints = convertHints(playerCode, secretCode)
+
+  console.log({convertedHints}, {hintNodesArray})
+
+  const resultsWithClass = convertedHints.reduce((acc, val, i) => {
+    let className
+
+    if (val === 'black') className = 'success'
+    if (val === 'white') className = 'halfway'
+    if (val === 'none') className = 'fail'
+
+    if (hintNodesArray) hintNodesArray[i].classList.add(className)
   })
 
-  console.log({hints}, {newHints}, {convertedHints})
+  return resultsWithClass
 }
