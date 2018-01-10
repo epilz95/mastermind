@@ -20,5 +20,29 @@
         &:last-child {
             margin-bottom: 0;
         }
+
+        &.secret-code {
+            &::before {
+                content: "";
+
+                // remove this when functions work
+                display: none;
+
+                position: absolute;
+                z-index: 100;
+                top: 1px;
+                right: 0;
+                bottom: 0;
+                left: 1px;
+
+                background-color: $color-mine-shaft;
+
+                border-radius: 50px;
+            }
+
+            .color-code::after {
+                display: none;
+            }
+        }
     }
 }
