@@ -76,16 +76,34 @@ const hideColorPalet = (colorPalet: ?HTMLElement) => {
   if (colorPalet) colorPalet.style.display = 'none'
 }
 
+const setSecretCode = (secretCodeVals: ?Array<any>, secCodeNodesArray: ?Array<any>) => {
+  if (!secretCodeVals) return
+
+  secretCodeVals.forEach((colorVal, i) => {
+    if (!secCodeNodesArray) return
+
+    const currentNode = secCodeNodesArray[i]
+
+    if (!currentNode) return
+
+    currentNode.style.backgroundColor = colorVal
+  })
+}
+
 export const initGame = ({
   stateSetterFnc,
   codeGenFnc,
+  setSecretCodeFnc,
   roundInitializer,
-  colorPalet
+  colorPalet,
+  secCodeNodesArray
 }: {
   stateSetterFnc: Function,
   codeGenFnc: Function,
+  setSecretCodeFnc: Function,
   roundInitializer: Function,
-  colorPalet: Colors
+  colorPalet: Colors,
+  secCodeNodesArray: Array<any>
 }) => {
   const colorArray = codeGenFnc(colorPalet, 4)
   const secretCode = convertToColorCode(colorArray)
@@ -97,6 +115,10 @@ export const initGame = ({
     currRound: newRound.currRound,
     rounds: { [newRound.currRound.toString()]: newRound.newRoundObj }
   })
+
+  const secretCodeVals = Object.values(store.secretCode)
+
+  if (secretCodeVals) setSecretCodeFnc(secretCodeVals, secCodeNodesArray)
 }
 
 export const displayHints = (hints: Hints, hintNodesArray: ?Array<any>) => {
@@ -150,14 +172,18 @@ const addListeners = (): void => {
   const buttonStart = document.querySelector('.button-start')
 
   if (buttonStart) {
-    buttonStart.addEventListener('click', () =>
+    buttonStart.addEventListener('click', () => {
+      const secCodeNodesArray = Array.from(document.querySelectorAll('.secret-code .position'))
+
       initGame({
         stateSetterFnc: setState,
         codeGenFnc: generateCode,
+        setSecretCodeFnc: setSecretCode,
         roundInitializer: initNewRound,
-        colorPalet: COLORS
+        colorPalet: COLORS,
+        secCodeNodesArray: secCodeNodesArray
       })
-    )
+    })
   }
 
   const buttonCheck = document.querySelector('.button--check')
