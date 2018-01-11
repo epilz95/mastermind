@@ -9,6 +9,7 @@ describe('initGame()', () => {
     const config = {
       stateSetterFnc: () => {},
       codeGenFnc: () => colors,
+      setSecretCodeFnc: () => {},
       roundInitializer: () => {
         return {
           currRound: 'placeholder',
@@ -16,6 +17,7 @@ describe('initGame()', () => {
         }
       },
       colorPalet: colors,
+      secCodeNodesArray: [],
       ...configOverwrite
     }
 

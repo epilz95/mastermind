@@ -25,9 +25,6 @@
             &::before {
                 content: "";
 
-                // remove this when functions work
-                display: none;
-
                 position: absolute;
                 z-index: 100;
                 top: 1px;
@@ -41,6 +38,10 @@
             }
 
             .color-code::after {
+                display: none;
+            }
+
+            &.secret-code--visible::before {
                 display: none;
             }
         }

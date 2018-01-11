@@ -5,6 +5,8 @@ import 'normalize.css'
 // $FlowFixMe
 import '../sass/main.scss'
 
+import { objToArray } from 'functionstein'
+
 import type {
   Hints,
   Colors
@@ -116,7 +118,7 @@ export const initGame = ({
     rounds: { [newRound.currRound.toString()]: newRound.newRoundObj }
   })
 
-  const secretCodeVals = Object.values(store.secretCode)
+  const secretCodeVals = objToArray(store.secretCode)
 
   if (secretCodeVals) setSecretCodeFnc(secretCodeVals, secCodeNodesArray)
 }
@@ -183,6 +185,11 @@ const addListeners = (): void => {
         colorPalet: COLORS,
         secCodeNodesArray: secCodeNodesArray
       })
+
+      // click it again
+        // clear the panel
+        // reset currRound and rounds in store
+        // remove visible class from secretCode
     })
   }
 
@@ -228,9 +235,30 @@ const addListeners = (): void => {
       console.log({ isCorrect })
       // if player code === secret code
         // --> end game 'win'
+      if (isCorrect) {
+        // display message
+        // end game
+          // disable further rows
+          // disable check button
+      }
 
       // if player code !== secret code && last round
         // --> end game 'lose'
+
+      const maxTries = 12
+      const secCodeRowNode = document.querySelector('.secret-code')
+
+      console.log(secCodeRowNode)
+
+      if (
+        secCodeRowNode &&
+        store.currRound &&
+        store.currRound === maxTries &&
+        !isCorrect) {
+        // display message
+        secCodeRowNode.classList.add('secret-code--visible')
+        // disable further checking
+      }
 
       // if player code !== secret code
         // --> init next round
@@ -243,6 +271,9 @@ const addListeners = (): void => {
           [newRound.currRound.toString()]: newRound.newRoundObj
         }
       })
+
+      // move check button up
+      // move message up
 
       console.log({ store })
     })
