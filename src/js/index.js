@@ -147,6 +147,22 @@ export const displayHints = (hints: Hints, hintNodesArray: ?Array<any>) => {
   })
 }
 
+const moveItemsPerRound = (message: ?HTMLElement, checkButton: ?HTMLElement) => {
+  if (!store.currRowNode) return
+
+  const currTop = store.currRowNode.offsetTop
+  const currHeight = store.currRowNode.offsetHeight
+
+  if (message) {
+    message.style.top = `${currTop - currHeight - 9}px`
+  }
+
+  if (checkButton) {
+    checkButton.style.bottom = 'initial'
+    checkButton.style.top = `${currTop - currHeight - 9}px`
+  }
+}
+
 const addListeners = (): void => {
   const positionNodes = document.querySelectorAll('.position')
   const colorPaletNode = document.querySelector('.color-palet')
@@ -235,8 +251,15 @@ const addListeners = (): void => {
       console.log({ isCorrect })
       // if player code === secret code
         // --> end game 'win'
+      const winMessage = document.querySelector('.win')
+
+      if (isCorrect && winMessage) {
+        winMessage.style.display = 'block'
+      } else if (winMessage) {
+        winMessage.style.display = 'none'
+      }
+
       if (isCorrect) {
-        // display message
         // end game
           // disable further rows
           // disable check button
@@ -248,16 +271,23 @@ const addListeners = (): void => {
       const maxTries = 12
       const secCodeRowNode = document.querySelector('.secret-code')
 
-      console.log(secCodeRowNode)
-
       if (
         secCodeRowNode &&
         store.currRound &&
-        store.currRound === maxTries &&
+        store.currRound >= maxTries &&
         !isCorrect) {
         // display message
+        const loseMessage = document.querySelector('.lose')
+
+        if (loseMessage) loseMessage.style.display = 'block'
+
         secCodeRowNode.classList.add('secret-code--visible')
-        // disable further checking
+
+        // TODO
+        // disable further checking (remove event listener from check button)
+        // disable further color selecting (remove event listener from positions)
+
+        return
       }
 
       // if player code !== secret code
@@ -274,6 +304,12 @@ const addListeners = (): void => {
 
       // move check button up
       // move message up
+      if (store.currRowNode) console.log(store.currRowNode.getBoundingClientRect())
+
+      const message = document.querySelector('.message')
+      const checkButton = document.querySelector('.button--check')
+
+      moveItemsPerRound(message, checkButton)
 
       console.log({ store })
     })
