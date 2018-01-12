@@ -201,14 +201,21 @@ const addListeners = (): void => {
 
       buttonStart.innerHTML = 'Restart'
 
+      const secCodeRowNode = document.querySelector('.secret-code')
+      if (secCodeRowNode) secCodeRowNode.classList.remove('secret-code--visible')
+
       // if someone clicks start again
       if (typeof store.paletNode !== 'undefined') {
         if (positionNodes) {
-          positionNodes.forEach(node => { node.style.backgroundColor = '' })
-        }
+          positionNodes.forEach(node => {
+            if (node.parentElement && node.parentElement.parentElement) {
+              const parentRowNode = node.parentElement.parentElement
+              if (parentRowNode.classList.contains('secret-code')) return
+            }
 
-        const secCodeRowNode = document.querySelector('.secret-code')
-        if (secCodeRowNode) secCodeRowNode.classList.remove('secret-code--visible')
+            node.style.backgroundColor = ''
+          })
+        }
 
         setState({
           paletNode: undefined,
