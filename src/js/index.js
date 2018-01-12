@@ -187,7 +187,7 @@ const addListeners = (): void => {
   const buttonStart = document.querySelector('.button-start')
 
   if (buttonStart) {
-    buttonStart.addEventListener('click', () => {
+    buttonStart.addEventListener('click', (e: MouseEvent) => {
       const secCodeNodesArray = Array.from(document.querySelectorAll('.secret-code .position'))
 
       initGame({
@@ -199,10 +199,37 @@ const addListeners = (): void => {
         secCodeNodesArray: secCodeNodesArray
       })
 
-      // click it again
-        // clear the panel
-        // reset currRound and rounds in store
-        // remove visible class from secretCode
+      buttonStart.innerHTML = 'Restart'
+
+      // if someone clicks start again
+      if (typeof store.paletNode !== 'undefined') {
+        if (positionNodes) {
+          positionNodes.forEach(node => { node.style.backgroundColor = '' })
+        }
+
+        const secCodeRowNode = document.querySelector('.secret-code')
+        if (secCodeRowNode) secCodeRowNode.classList.remove('secret-code--visible')
+
+        setState({
+          paletNode: undefined,
+          currRowNode: undefined
+        })
+
+        const hints = document.querySelectorAll('.result')
+        const messages = document.querySelectorAll('.message')
+        const checkButton = document.querySelector('.button--check')
+
+        hints.forEach(hint => hint.classList.remove('fail', 'halfway', 'success'))
+
+        if (messages) {
+          messages.forEach(message => {
+            message.style.top = ''
+            message.style.display = 'none'
+          })
+        }
+
+        if (checkButton) checkButton.style.top = ''
+      }
     })
   }
 
@@ -210,6 +237,8 @@ const addListeners = (): void => {
 
   if (buttonCheck) {
     buttonCheck.addEventListener('click', () => {
+      if (typeof store.currRound === 'undefined') return
+
       const { currRound, rounds, secretCode } = store
       const currRoundObj = currRound
         ? rounds[currRound]
@@ -302,17 +331,6 @@ const addListeners = (): void => {
           [newRound.currRound.toString()]: newRound.newRoundObj
         }
       })
-
-      // const messages = document.querySelectorAll('.message')
-      // const checkButton = document.querySelector('.button--check')
-
-      // // moveItemsPerRound(message, checkButton)
-      // messages.forEach(message => {
-      //   if (isCorrect && message.classList.contains('win')) return
-      //   moveItemsPerRound(message, checkButton)
-      // })
-
-      console.log({ store })
     })
   }
 }
