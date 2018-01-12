@@ -155,7 +155,7 @@ const moveItemsPerRound = (message: ?HTMLElement, checkButton: ?HTMLElement) => 
 
   message.style.top = `${currTop - currHeight - 9}px`
 
-  if (checkButton && !store.isCorrect) {
+  if (checkButton) {
     checkButton.style.top = `${currTop - currHeight - 9}px`
   }
 }
@@ -242,7 +242,15 @@ const addListeners = (): void => {
         displayHints(convertedHints, hintNodesArray)
       }
 
-      console.log({ isCorrect })
+      const messages = document.querySelectorAll('.message')
+      const checkButton = document.querySelector('.button--check')
+
+      // moveItemsPerRound(message, checkButton)
+      messages.forEach(message => {
+        if (isCorrect) return
+        moveItemsPerRound(message, checkButton)
+      })
+
       // if player code === secret code
         // --> end game 'win'
       const secCodeRowNode = document.querySelector('.secret-code')
@@ -285,8 +293,6 @@ const addListeners = (): void => {
         return
       }
 
-      // if player code !== secret code
-        // --> init next round
       const newRound = initNewRound(currRound)
 
       setState({
@@ -297,14 +303,14 @@ const addListeners = (): void => {
         }
       })
 
-      const messages = document.querySelectorAll('.message')
-      const checkButton = document.querySelector('.button--check')
+      // const messages = document.querySelectorAll('.message')
+      // const checkButton = document.querySelector('.button--check')
 
-      // moveItemsPerRound(message, checkButton)
-      messages.forEach(message => {
-        if (isCorrect && message.classList.contains('win')) return
-        moveItemsPerRound(message, checkButton)
-      })
+      // // moveItemsPerRound(message, checkButton)
+      // messages.forEach(message => {
+      //   if (isCorrect && message.classList.contains('win')) return
+      //   moveItemsPerRound(message, checkButton)
+      // })
 
       console.log({ store })
     })
