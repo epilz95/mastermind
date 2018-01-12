@@ -148,17 +148,14 @@ export const displayHints = (hints: Hints, hintNodesArray: ?Array<any>) => {
 }
 
 const moveItemsPerRound = (message: ?HTMLElement, checkButton: ?HTMLElement) => {
-  if (!store.currRowNode) return
+  if (!store.currRowNode || !message) return
 
   const currTop = store.currRowNode.offsetTop
   const currHeight = store.currRowNode.offsetHeight
 
-  if (message) {
-    message.style.top = `${currTop - currHeight - 9}px`
-  }
+  message.style.top = `${currTop - currHeight - 9}px`
 
-  if (checkButton) {
-    checkButton.style.bottom = 'initial'
+  if (checkButton && !store.isCorrect) {
     checkButton.style.top = `${currTop - currHeight - 9}px`
   }
 }
@@ -233,11 +230,8 @@ const addListeners = (): void => {
 
       if (!isValidCode) return
 
-      // TODO
-      // compare player code with secret code
       const { hints, isCorrect } = compareCodes(playerCode, secretCode)
 
-      // --> show hints for current round
       if (store.paletNode) {
         setState({ currRowNode: store.paletNode.parentNode.parentNode })
 
@@ -251,6 +245,7 @@ const addListeners = (): void => {
       console.log({ isCorrect })
       // if player code === secret code
         // --> end game 'win'
+      const secCodeRowNode = document.querySelector('.secret-code')
       const winMessage = document.querySelector('.win')
 
       if (isCorrect && winMessage) {
@@ -260,6 +255,7 @@ const addListeners = (): void => {
       }
 
       if (isCorrect) {
+        if (secCodeRowNode) secCodeRowNode.classList.add('secret-code--visible')
         // end game
           // disable further rows
           // disable check button
@@ -269,7 +265,6 @@ const addListeners = (): void => {
         // --> end game 'lose'
 
       const maxTries = 12
-      const secCodeRowNode = document.querySelector('.secret-code')
 
       if (
         secCodeRowNode &&
@@ -302,14 +297,14 @@ const addListeners = (): void => {
         }
       })
 
-      // move check button up
-      // move message up
-      if (store.currRowNode) console.log(store.currRowNode.getBoundingClientRect())
-
-      const message = document.querySelector('.message')
+      const messages = document.querySelectorAll('.message')
       const checkButton = document.querySelector('.button--check')
 
-      moveItemsPerRound(message, checkButton)
+      // moveItemsPerRound(message, checkButton)
+      messages.forEach(message => {
+        if (isCorrect && message.classList.contains('win')) return
+        moveItemsPerRound(message, checkButton)
+      })
 
       console.log({ store })
     })

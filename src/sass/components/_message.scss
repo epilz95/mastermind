@@ -2,15 +2,16 @@
     display: none;
 
     position: absolute;
+    top: calc(100% - 76px);
     left: -220px;
 
-    border: 3px solid $color-tangerine;
+    border: 3px solid $color-white;
     padding: 5px 20px;
 
     border-radius: 50px;
 
     span {
-        color: $color-tangerine;
+        color: $color-white;
         font: normal 16px/30px "Open Sans", sans-serif;
     }
 
@@ -23,6 +24,7 @@
     }
 
     &.win {
+        left: -215px;
         border-color: $color-citron;
 
         span {
@@ -31,6 +33,7 @@
     }
 
     &.lose {
+        left: -185px;
         border-color: $color-thunderbird;
 
         span {

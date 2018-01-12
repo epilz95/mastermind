@@ -8,12 +8,12 @@
     border-radius: 50px;
     outline: none;
 
-    transition: background 0.2s, transform 0.2s, top 1s;
+    transition: background 0.2s, transform 0.2s, top 0.2s;
 
     &--check {
         position: absolute;
+        top: calc(100% - 76px);
         right: -115px;
-        bottom: 30px;
     }
 
     &--full-width {
