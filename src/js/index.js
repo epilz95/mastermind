@@ -32,6 +32,11 @@ const showColorPalet = (e, colorPalet: ?HTMLElement, codeNode: ?HTMLElement) => 
   if (colorPalet && codeNode) {
     setState({ paletNode: e.target })
 
+    if (store.paletNode && store.paletNode.parentElement) {
+      const currRow = parseInt(store.paletNode.parentElement.parentElement.getAttribute('data-row'))
+      if (currRow !== store.currRound) return
+    }
+
     const positionCoords = codeNode.getBoundingClientRect()
 
     colorPalet.style.display = 'block'
@@ -281,14 +286,11 @@ const addListeners = (): void => {
       const messages = document.querySelectorAll('.message')
       const checkButton = document.querySelector('.button--check')
 
-      // moveItemsPerRound(message, checkButton)
       messages.forEach(message => {
         if (isCorrect) return
         moveItemsPerRound(message, checkButton)
       })
 
-      // if player code === secret code
-        // --> end game 'win'
       const secCodeRowNode = document.querySelector('.secret-code')
       const winMessage = document.querySelector('.win')
 
@@ -315,7 +317,6 @@ const addListeners = (): void => {
         store.currRound &&
         store.currRound >= maxTries &&
         !isCorrect) {
-        // display message
         const loseMessage = document.querySelector('.lose')
 
         if (loseMessage) loseMessage.style.display = 'block'
