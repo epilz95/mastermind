@@ -2,7 +2,7 @@
 
 import type { Colors } from './types'
 
-export const MAX_CODE_LENGTH: Number = 4
+export const MAX_CODE_LENGTH: Number = 5
 
 export const COLORS: Colors = [
   {
