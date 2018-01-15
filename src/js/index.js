@@ -190,6 +190,7 @@ const addListeners = (): void => {
   }
 
   const buttonStart = document.querySelector('.button-start')
+  const buttonCheck = document.querySelector('.button--check')
 
   if (buttonStart) {
     buttonStart.addEventListener('click', (e: MouseEvent) => {
@@ -204,6 +205,7 @@ const addListeners = (): void => {
         secCodeNodesArray: secCodeNodesArray
       })
 
+      if (buttonCheck) buttonCheck.classList.remove('button--inactive')
       buttonStart.innerHTML = 'Restart'
 
       const secCodeRowNode = document.querySelector('.secret-code')
@@ -244,8 +246,6 @@ const addListeners = (): void => {
       }
     })
   }
-
-  const buttonCheck = document.querySelector('.button--check')
 
   if (buttonCheck) {
     buttonCheck.addEventListener('click', () => {
@@ -293,18 +293,27 @@ const addListeners = (): void => {
 
       const secCodeRowNode = document.querySelector('.secret-code')
       const winMessage = document.querySelector('.win')
+      const tryCount = currRound
+        ? currRound.toString()
+        : undefined
 
-      if (isCorrect && winMessage) {
+      if (isCorrect && winMessage && tryCount) {
+        const winMsgContent = winMessage.querySelector('span')
+
         winMessage.style.display = 'block'
+        if (winMsgContent) winMsgContent.textContent = `You won the game with ${tryCount} tries!`
       } else if (winMessage) {
         winMessage.style.display = 'none'
       }
 
       if (isCorrect) {
         if (secCodeRowNode) secCodeRowNode.classList.add('secret-code--visible')
-        // end game
-          // disable further rows
-          // disable check button
+
+        if (buttonCheck) buttonCheck.classList.add('button--inactive')
+
+        console.log({store})
+
+        return
       }
 
       // if player code !== secret code && last round

@@ -1,4 +1,7 @@
 .button {
+    position: relative;
+    z-index: 1;
+
     border: 3px solid $color-white;
     padding: 5px 20px;
 
@@ -8,7 +11,24 @@
     border-radius: 50px;
     outline: none;
 
-    transition: background 0.2s, transform 0.2s, top 0.2s;
+    transition: transform 0.2s, top 0.2s;
+
+    &::before {
+        content: "";
+
+        position: absolute;
+        z-index: -1;
+        top: 1px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        background: linear-gradient(90deg, $color-citron 0%, $color-thunderbird 90%);
+
+        opacity: 0;
+        border-radius: 50px;
+        transition: opacity 0.2s;
+    }
 
     &--check {
         position: absolute;
@@ -19,24 +39,31 @@
     &--full-width {
         margin-top: 30px;
         width: 100%;
+    }
 
-        background: $color-dove-gray;
+    &--inactive {
+        color: $color-dove-gray;
+        border-color: $color-dove-gray;
+
+        &::before {
+            display: none;
+        }
 
         &:hover {
-            background:
-                linear-gradient(
-                    145deg,
-                    $color-lemon 0%,
-                    $color-salem 30%,
-                    $color-denim 60%,
-                    $color-thunderbird 100%
-                );
+            cursor: default !important;
+        }
+
+        &:active {
+            transform: scale(1) !important;
         }
     }
 
     &:hover {
-        background-color: $color-dove-gray;
         cursor: pointer;
+
+        &::before {
+            opacity: 1;
+        }
     }
 
     &:active {
