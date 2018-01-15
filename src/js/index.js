@@ -283,7 +283,7 @@ const addListeners = (): void => {
         displayHints(convertedHints, hintNodesArray)
       }
 
-      const maxTries = 2
+      const maxTries = 12
       const messages = document.querySelectorAll('.message')
 
       messages.forEach(message => {
