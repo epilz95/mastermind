@@ -33,8 +33,10 @@ const showColorPalet = (e, colorPalet: ?HTMLElement, codeNode: ?HTMLElement) => 
     setState({ paletNode: e.target })
 
     if (store.paletNode && store.paletNode.parentElement) {
-      const currRow = parseInt(store.paletNode.parentElement.parentElement.getAttribute('data-row'))
-      if (currRow !== store.currRound) return
+      const currRowNode = store.paletNode.parentElement.parentElement
+      const currRowNumber = parseInt(currRowNode.getAttribute('data-row'))
+
+      if (currRowNumber !== store.currRound) return
     }
 
     const positionCoords = codeNode.getBoundingClientRect()
@@ -165,6 +167,14 @@ const moveItemsPerRound = (message: ?HTMLElement, checkButton: ?HTMLElement) => 
   }
 }
 
+const markActiveRow = (rowNodesArray: Array<any>) => {
+  rowNodesArray.forEach(node =>
+    parseInt(node.getAttribute('data-row')) === store.currRound
+    ? node.classList.add('panel__row--active')
+    : node.classList.remove('panel__row--active')
+  )
+}
+
 const addListeners = (): void => {
   const positionNodes = document.querySelectorAll('.position')
   const colorPaletNode = document.querySelector('.color-palet')
@@ -211,6 +221,9 @@ const addListeners = (): void => {
       const secCodeRowNode = document.querySelector('.secret-code')
       if (secCodeRowNode) secCodeRowNode.classList.remove('secret-code--visible')
 
+      const rowNodesArray = Array.from(document.querySelectorAll('.panel__row'))
+      markActiveRow(rowNodesArray)
+
       // if someone clicks start again
       if (typeof store.paletNode !== 'undefined') {
         if (positionNodes) {
@@ -244,6 +257,8 @@ const addListeners = (): void => {
 
         if (checkButton) checkButton.style.top = ''
       }
+
+      console.log({store})
     })
   }
 
@@ -337,6 +352,9 @@ const addListeners = (): void => {
           [newRound.currRound.toString()]: newRound.newRoundObj
         }
       })
+
+      const rowNodesArray = Array.from(document.querySelectorAll('.panel__row'))
+      markActiveRow(rowNodesArray)
     })
   }
 }

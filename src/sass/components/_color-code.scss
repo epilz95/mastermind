@@ -29,9 +29,16 @@
         height: 25px;
 
         border-radius: 50%;
+        transition: transform 0.2s;
 
         &:last-child {
             margin-right: 0;
         }
+    }
+}
+
+.panel__row--active {
+    .position:active {
+        transform: scale(0.9);
     }
 }
