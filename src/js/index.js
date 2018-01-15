@@ -283,12 +283,13 @@ const addListeners = (): void => {
         displayHints(convertedHints, hintNodesArray)
       }
 
+      const maxTries = 2
       const messages = document.querySelectorAll('.message')
-      const checkButton = document.querySelector('.button--check')
 
       messages.forEach(message => {
         if (isCorrect) return
-        moveItemsPerRound(message, checkButton)
+        if (store.currRound && store.currRound >= maxTries && !isCorrect) return
+        moveItemsPerRound(message, buttonCheck)
       })
 
       const secCodeRowNode = document.querySelector('.secret-code')
@@ -308,18 +309,10 @@ const addListeners = (): void => {
 
       if (isCorrect) {
         if (secCodeRowNode) secCodeRowNode.classList.add('secret-code--visible')
-
         if (buttonCheck) buttonCheck.classList.add('button--inactive')
-
-        console.log({store})
 
         return
       }
-
-      // if player code !== secret code && last round
-        // --> end game 'lose'
-
-      const maxTries = 12
 
       if (
         secCodeRowNode &&
@@ -329,12 +322,8 @@ const addListeners = (): void => {
         const loseMessage = document.querySelector('.lose')
 
         if (loseMessage) loseMessage.style.display = 'block'
-
         secCodeRowNode.classList.add('secret-code--visible')
-
-        // TODO
-        // disable further checking (remove event listener from check button)
-        // disable further color selecting (remove event listener from positions)
+        buttonCheck.classList.add('button--inactive')
 
         return
       }
