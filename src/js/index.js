@@ -285,7 +285,7 @@ const addCheckButtonListeners = () => {
 
         const hintNodesArray = Array.from(store.currRowNode.querySelectorAll('.result'))
 
-        const convertedHints = fillWithNones(hints, 4)
+        const convertedHints = fillWithNones(hints, MAX_CODE_LENGTH)
 
         displayHints(convertedHints, hintNodesArray)
       }
