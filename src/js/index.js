@@ -12,7 +12,7 @@ import type {
   Colors
 } from './types'
 
-import { COLORS } from './config'
+import { COLORS, MAX_CODE_LENGTH } from './config'
 
 import { setState, store } from './store'
 
@@ -277,7 +277,7 @@ const addListeners = (): void => {
         ? currRoundObj.playerCode
         : {}
 
-      const isValidCode = checkCodeLength(playerCode)
+      const isValidCode = checkCodeLength(playerCode, MAX_CODE_LENGTH)
       const errorMessage = document.querySelector('.error')
 
       if (!isValidCode && errorMessage) {
@@ -288,7 +288,7 @@ const addListeners = (): void => {
 
       if (!isValidCode) return
 
-      const { hints, isCorrect } = compareCodes(playerCode, secretCode)
+      const { hints, isCorrect } = compareCodes(playerCode, secretCode, MAX_CODE_LENGTH)
 
       if (store.paletNode) {
         setState({ currRowNode: store.paletNode.parentNode.parentNode })

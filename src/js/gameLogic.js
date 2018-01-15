@@ -86,8 +86,8 @@ export const initNewRound = (currRound: ?number) => {
   }
 }
 
-export const checkCodeLength = (playerCode: Object) => {
-  return Object.keys(playerCode).length === 4
+export const checkCodeLength = (playerCode: Object, maxCodeLength: Number) => {
+  return Object.keys(playerCode).length === maxCodeLength
 }
 
 export const checkColorAndPosition = (playerCode: ColorCode, secretCode: ColorCode) => {
@@ -148,7 +148,7 @@ export const checkColors = (playerCode: ColorCode, secretCode: ColorCode) => {
   return whites
 }
 
-export const compareCodes = (playerCode: ColorCode, secretCode: ColorCode): {|
+export const compareCodes = (playerCode: ColorCode, secretCode: ColorCode, maxCodeLength: Number): {|
   isCorrect: boolean,
   hints: Hints
 |} => {
@@ -159,7 +159,7 @@ export const compareCodes = (playerCode: ColorCode, secretCode: ColorCode): {|
 
   const whites = checkColors(newPlayerCode, newSecretCode)
 
-  const isCorrect = blacks.length === 4
+  const isCorrect = blacks.length === maxCodeLength
 
   const hints = [ ...blacks, ...whites ]
 

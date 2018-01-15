@@ -97,7 +97,8 @@
       "Event",
       "MouseEvent",
       "NodeList",
-      "jest"
+      "jest",
+      "Number"
     ]
   },
   "license": "UNLICENSED",
