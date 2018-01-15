@@ -86,7 +86,7 @@ export const initNewRound = (currRound: ?number) => {
   }
 }
 
-export const checkCodeLength = (playerCode: Object, maxCodeLength: Number) => {
+export const checkCodeLength = (playerCode: Object, maxCodeLength: number) => {
   return Object.keys(playerCode).length === maxCodeLength
 }
 
@@ -148,7 +148,7 @@ export const checkColors = (playerCode: ColorCode, secretCode: ColorCode) => {
   return whites
 }
 
-export const compareCodes = (playerCode: ColorCode, secretCode: ColorCode, maxCodeLength: Number): {|
+export const compareCodes = (playerCode: ColorCode, secretCode: ColorCode, maxCodeLength: number): {|
   isCorrect: boolean,
   hints: Hints
 |} => {

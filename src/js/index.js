@@ -120,6 +120,7 @@ export const initGame = ({
   const newRound = roundInitializer(undefined)
 
   stateSetterFnc({
+    isStarted: true,
     secretCode,
     currRound: newRound.currRound,
     rounds: { [newRound.currRound.toString()]: newRound.newRoundObj }
@@ -177,92 +178,81 @@ const markActiveRow = (rowNodesArray: Array<any>) => rowNodesArray.forEach(node 
   }
 })
 
-const addListeners = (): void => {
-  const positionNodes = document.querySelectorAll('.position')
-  const colorPaletNode = document.querySelector('.color-palet')
+const startGame = () => {
+  const secCodeNodesArray = Array.from(document.querySelectorAll('.secret-code .position'))
 
-  if (positionNodes && colorPaletNode) {
-    positionNodes.forEach(
-      node => node.addEventListener('click', (e: MouseEvent) => showColorPalet(e, colorPaletNode, node))
-    )
-  }
+  initGame({
+    stateSetterFnc: setState,
+    codeGenFnc: generateCode,
+    setSecretCodeFnc: setSecretCode,
+    roundInitializer: initNewRound,
+    colorPalet: COLORS,
+    secCodeNodesArray: secCodeNodesArray
+  })
 
-  if (window && colorPaletNode) {
-    window.addEventListener('click', () => hideColorPalet(colorPaletNode))
-  }
-
-  const colorPaletColorNodes = colorPaletNode
-  ? colorPaletNode.querySelectorAll('.color-palet__option')
-  : undefined
-
-  if (colorPaletColorNodes) {
-    colorPaletColorNodes.forEach(
-      node => node.addEventListener('click', (e: MouseEvent) => setColor(e))
-    )
-  }
-
-  const buttonStart = document.querySelector('.button-start')
   const buttonCheck = document.querySelector('.button--check')
+  if (buttonCheck) buttonCheck.classList.remove('button--inactive')
 
-  if (buttonStart) {
-    buttonStart.addEventListener('click', (e: MouseEvent) => {
-      const secCodeNodesArray = Array.from(document.querySelectorAll('.secret-code .position'))
+  const secCodeRowNode = document.querySelector('.secret-code')
+  if (secCodeRowNode) secCodeRowNode.classList.remove('secret-code--visible')
 
-      initGame({
-        stateSetterFnc: setState,
-        codeGenFnc: generateCode,
-        setSecretCodeFnc: setSecretCode,
-        roundInitializer: initNewRound,
-        colorPalet: COLORS,
-        secCodeNodesArray: secCodeNodesArray
-      })
+  const rowNodesArray = Array.from(document.querySelectorAll('.panel__row'))
+  markActiveRow(rowNodesArray)
+}
 
-      if (buttonCheck) buttonCheck.classList.remove('button--inactive')
-      buttonStart.innerHTML = 'Restart'
+const restartGame = () => {
+  const positionNodes = document.querySelectorAll('.position')
 
-      const secCodeRowNode = document.querySelector('.secret-code')
-      if (secCodeRowNode) secCodeRowNode.classList.remove('secret-code--visible')
-
-      const rowNodesArray = Array.from(document.querySelectorAll('.panel__row'))
-      markActiveRow(rowNodesArray)
-
-      // if someone clicks start again
-      if (typeof store.paletNode !== 'undefined') {
-        if (positionNodes) {
-          positionNodes.forEach(node => {
-            if (node.parentElement && node.parentElement.parentElement) {
-              const parentRowNode = node.parentElement.parentElement
-              if (parentRowNode.classList.contains('secret-code')) return
-            }
-
-            node.style.backgroundColor = ''
-          })
-        }
-
-        setState({
-          paletNode: undefined,
-          currRowNode: undefined
-        })
-
-        const hints = document.querySelectorAll('.result')
-        const messages = document.querySelectorAll('.message')
-        const checkButton = document.querySelector('.button--check')
-
-        hints.forEach(hint => hint.classList.remove('fail', 'halfway', 'success'))
-
-        if (messages) {
-          messages.forEach(message => {
-            message.style.top = ''
-            message.style.display = 'none'
-          })
-        }
-
-        if (checkButton) checkButton.style.top = ''
+  if (positionNodes) {
+    positionNodes.forEach(node => {
+      if (node.parentElement && node.parentElement.parentElement) {
+        const parentRowNode = node.parentElement.parentElement
+        if (parentRowNode.classList.contains('secret-code')) return
       }
 
-      console.log({store})
+      node.style.backgroundColor = ''
     })
   }
+
+  setState({
+    paletNode: undefined,
+    currRowNode: undefined
+  })
+
+  const hints = document.querySelectorAll('.result')
+  const messages = document.querySelectorAll('.message')
+  const checkButton = document.querySelector('.button--check')
+
+  hints.forEach(hint => hint.classList.remove('fail', 'halfway', 'success'))
+
+  if (messages) {
+    messages.forEach(message => {
+      message.style.top = ''
+      message.style.display = 'none'
+    })
+  }
+
+  if (checkButton) checkButton.style.top = ''
+}
+
+const addStartButtonListeners = () => {
+  const buttonStart = document.querySelector('.button-start')
+
+  if (!buttonStart) return
+
+  buttonStart.addEventListener('click', (e: MouseEvent) => {
+    buttonStart.innerHTML = 'Restart'
+
+    if (!store.isStarted) {
+      startGame()
+    } else {
+      restartGame()
+    }
+  })
+}
+
+const addCheckButtonListeners = () => {
+  const buttonCheck = document.querySelector('.button--check')
 
   if (buttonCheck) {
     buttonCheck.addEventListener('click', () => {
@@ -359,6 +349,34 @@ const addListeners = (): void => {
       markActiveRow(rowNodesArray)
     })
   }
+}
+
+const addListeners = (): void => {
+  const positionNodes = document.querySelectorAll('.position')
+  const colorPaletNode = document.querySelector('.color-palet')
+
+  if (positionNodes && colorPaletNode) {
+    positionNodes.forEach(
+      node => node.addEventListener('click', (e: MouseEvent) => showColorPalet(e, colorPaletNode, node))
+    )
+  }
+
+  if (window && colorPaletNode) {
+    window.addEventListener('click', () => hideColorPalet(colorPaletNode))
+  }
+
+  const colorPaletColorNodes = colorPaletNode
+  ? colorPaletNode.querySelectorAll('.color-palet__option')
+  : undefined
+
+  if (colorPaletColorNodes) {
+    colorPaletColorNodes.forEach(
+      node => node.addEventListener('click', (e: MouseEvent) => setColor(e))
+    )
+  }
+
+  addStartButtonListeners()
+  addCheckButtonListeners()
 }
 
 const main = () => {
