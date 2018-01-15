@@ -167,13 +167,15 @@ const moveItemsPerRound = (message: ?HTMLElement, checkButton: ?HTMLElement) => 
   }
 }
 
-const markActiveRow = (rowNodesArray: Array<any>) => {
-  rowNodesArray.forEach(node =>
-    parseInt(node.getAttribute('data-row')) === store.currRound
-    ? node.classList.add('panel__row--active')
-    : node.classList.remove('panel__row--active')
-  )
-}
+const markActiveRow = (rowNodesArray: Array<any>) => rowNodesArray.forEach(node => {
+  const isCurrRound = parseInt(node.getAttribute('data-row')) === store.currRound
+
+  if (isCurrRound) {
+    node.classList.add('panel__row--active')
+  } else {
+    node.classList.remove('panel__row--active')
+  }
+})
 
 const addListeners = (): void => {
   const positionNodes = document.querySelectorAll('.position')
