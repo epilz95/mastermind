@@ -10,7 +10,7 @@ import {
   fillWithNones
 } from '../gameLogic'
 
-import { COLORS } from '../config'
+import { COLORS, MAX_CODE_LENGTH } from '../config'
 
 describe('generateCode()', () => {
   it('should generate a color array with specific number of items', () => {
@@ -152,7 +152,9 @@ describe('checkCodeLength', () => {
       color4: '#324234'
     }
 
-    expect(checkCodeLength(playerCode)).toBe(true)
+    const maxCodeLength = MAX_CODE_LENGTH
+
+    expect(checkCodeLength(playerCode, maxCodeLength)).toBe(true)
   })
 
   it('should return false if playerCode has less than 4 items', () => {
@@ -193,7 +195,9 @@ describe('compareCodes()', () => {
       color4: 'black'
     }
 
-    const { hints } = compareCodes(playerCode, secretCode)
+    const maxCodeLength = MAX_CODE_LENGTH
+
+    const { hints } = compareCodes(playerCode, secretCode, maxCodeLength)
 
     expect(hints).toEqual([])
   })
@@ -213,7 +217,9 @@ describe('compareCodes()', () => {
       color4: 'black'
     }
 
-    const { hints } = compareCodes(playerCode, secretCode)
+    const maxCodeLength = MAX_CODE_LENGTH
+
+    const { hints } = compareCodes(playerCode, secretCode, maxCodeLength)
 
     expect(hints).toEqual([ 'white' ])
   })
@@ -233,7 +239,9 @@ describe('compareCodes()', () => {
       color4: 'black'
     }
 
-    const { hints } = compareCodes(playerCode, secretCode)
+    const maxCodeLength = MAX_CODE_LENGTH
+
+    const { hints } = compareCodes(playerCode, secretCode, maxCodeLength)
 
     expect(hints).toEqual([ 'black' ])
   })
@@ -253,7 +261,9 @@ describe('compareCodes()', () => {
       color4: 'black'
     }
 
-    const { hints } = compareCodes(playerCode, secretCode)
+    const maxCodeLength = MAX_CODE_LENGTH
+
+    const { hints } = compareCodes(playerCode, secretCode, maxCodeLength)
 
     expect(hints).toEqual([ 'white', 'white', 'white', 'white' ])
   })
@@ -273,7 +283,9 @@ describe('compareCodes()', () => {
       color4: 'black'
     }
 
-    const { hints } = compareCodes(playerCode, secretCode)
+    const maxCodeLength = MAX_CODE_LENGTH
+
+    const { hints } = compareCodes(playerCode, secretCode, maxCodeLength)
 
     expect(hints).toEqual([ 'black', 'black', 'black', 'black' ])
   })
@@ -293,7 +305,9 @@ describe('compareCodes()', () => {
       color4: 'black'
     }
 
-    const { hints } = compareCodes(playerCode, secretCode)
+    const maxCodeLength = MAX_CODE_LENGTH
+
+    const { hints } = compareCodes(playerCode, secretCode, maxCodeLength)
 
     expect(hints).toEqual([ 'black', 'white' ])
   })
@@ -313,7 +327,9 @@ describe('compareCodes()', () => {
       color4: 'black'
     }
 
-    const { hints } = compareCodes(playerCode, secretCode)
+    const maxCodeLength = MAX_CODE_LENGTH
+
+    const { hints } = compareCodes(playerCode, secretCode, maxCodeLength)
 
     expect(hints).toEqual([ 'black', 'white' ])
   })
@@ -333,7 +349,9 @@ describe('compareCodes()', () => {
       color4: 'black'
     }
 
-    const { isCorrect } = compareCodes(playerCode, secretCode)
+    const maxCodeLength = MAX_CODE_LENGTH
+
+    const { isCorrect } = compareCodes(playerCode, secretCode, maxCodeLength)
 
     expect(isCorrect).toBe(false)
   })
@@ -353,7 +371,9 @@ describe('compareCodes()', () => {
       color4: 'black'
     }
 
-    const { isCorrect } = compareCodes(playerCode, secretCode)
+    const maxCodeLength = MAX_CODE_LENGTH
+
+    const { isCorrect } = compareCodes(playerCode, secretCode, maxCodeLength)
 
     expect(isCorrect).toBe(true)
   })
