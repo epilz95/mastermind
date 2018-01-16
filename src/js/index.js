@@ -251,117 +251,134 @@ const addStartButtonListeners = () => {
   })
 }
 
-const addCheckButtonListeners = () => {
-  const buttonCheck = document.querySelector('.button--check')
+const validateCode = (playerCode) => {
+  const isValidCode = checkCodeLength(playerCode, MAX_CODE_LENGTH)
 
-  if (buttonCheck) {
-    buttonCheck.addEventListener('click', () => {
-      if (typeof store.currRound === 'undefined') return
+  const errorMessage = document.querySelector('.error')
 
-      const { currRound, rounds, secretCode } = store
-      const currRoundObj = currRound
-        ? rounds[currRound]
-        : undefined
-
-      const playerCode = currRoundObj
-        ? currRoundObj.playerCode
-        : {}
-
-      // check if playerCode is valid
-      const isValidCode = checkCodeLength(playerCode, MAX_CODE_LENGTH)
-
-      // display error message
-      const errorMessage = document.querySelector('.error')
-
-      if (!isValidCode && errorMessage) {
-        errorMessage.style.display = 'block'
-      } else if (errorMessage) {
-        errorMessage.style.display = 'none'
-      }
-
-      if (!isValidCode) return
-
-      const { hints, isCorrect } = compareCodes(playerCode, secretCode, MAX_CODE_LENGTH)
-
-      if (store.paletNode) {
-        // set the currRowNode to the state to select corresponding hintNodes
-        setState({ currRowNode: store.paletNode.parentNode.parentNode })
-
-        const hintNodesArray = Array.from(store.currRowNode.querySelectorAll('.result'))
-
-        // fill hints to have specified length
-        const convertedHints = fillWithNones(hints, MAX_CODE_LENGTH)
-
-        // display the hints
-        displayHints(convertedHints, hintNodesArray)
-      }
-
-      const messages = document.querySelectorAll('.message')
-
-      // move messages and checkButton up
-      messages.forEach(message => {
-        if (isCorrect) return
-        if (store.currRound && store.currRound >= MAX_TRIES && !isCorrect) return
-        moveItemsPerRound(message, buttonCheck)
-      })
-
-      // CASE WIN
-      const secCodeRowNode = document.querySelector('.secret-code')
-      const winMessage = document.querySelector('.win')
-      const tryCount = currRound
-        ? currRound.toString()
-        : undefined
-
-      // show winMessage with number of tries needed
-      if (isCorrect && winMessage && tryCount) {
-        const winMsgContent = winMessage.querySelector('span')
-
-        winMessage.style.display = 'block'
-        if (winMsgContent) winMsgContent.textContent = `You won the game with ${tryCount} tries!`
-      } else if (winMessage) {
-        winMessage.style.display = 'none'
-      }
-
-      // show secretCode and make checkButton inactive
-      if (isCorrect) {
-        if (secCodeRowNode) secCodeRowNode.classList.add('secret-code--visible')
-        if (buttonCheck) buttonCheck.classList.add('button--inactive')
-
-        return
-      }
-
-      // CASE LOSE
-      // show loseMessage, secretCode and make checkButton inactive
-      if (
-        secCodeRowNode &&
-        store.currRound &&
-        store.currRound >= MAX_TRIES &&
-        !isCorrect) {
-        const loseMessage = document.querySelector('.lose')
-
-        if (loseMessage) loseMessage.style.display = 'block'
-        secCodeRowNode.classList.add('secret-code--visible')
-        buttonCheck.classList.add('button--inactive')
-
-        return
-      }
-
-      // if no win or lose case has occurred, init new round and update state
-      const newRound = initNewRound(currRound)
-
-      setState({
-        currRound: newRound.currRound,
-        rounds: {
-          ...rounds,
-          [newRound.currRound.toString()]: newRound.newRoundObj
-        }
-      })
-
-      // add class active to current row
-      const rowNodesArray = Array.from(document.querySelectorAll('.panel__row'))
-      markActiveRow(rowNodesArray)
-    })
+  if (!isValidCode && errorMessage) {
+    errorMessage.style.display = 'block'
+  } else if (errorMessage) {
+    errorMessage.style.display = 'none'
   }
+
+  return isValidCode
+}
+
+const renderHints = (hints) => {
+  if (store.paletNode) {
+    // set the currRowNode to the state to select corresponding hintNodes
+    setState({ currRowNode: store.paletNode.parentNode.parentNode })
+
+    const hintNodesArray = Array.from(store.currRowNode.querySelectorAll('.result'))
+
+    // fill hints to have specified length
+    const convertedHints = fillWithNones(hints, MAX_CODE_LENGTH)
+
+    // display the hints
+    displayHints(convertedHints, hintNodesArray)
+  }
+}
+
+const moveCheckAndMsg = (isCorrect, buttonCheck) => {
+  const messages = document.querySelectorAll('.message')
+
+  // move messages and checkButton up
+  messages.forEach(message => {
+    if (isCorrect) return
+    if (store.currRound && store.currRound >= MAX_TRIES && !isCorrect) return
+    moveItemsPerRound(message, buttonCheck)
+  })
+}
+
+const handleWin = (secCodeRowNode, currRound, buttonCheck) => {
+  // show secretCode and make checkButton inactive
+  if (secCodeRowNode) secCodeRowNode.classList.add('secret-code--visible')
+  if (buttonCheck) buttonCheck.classList.add('button--inactive')
+
+  const winMessage = document.querySelector('.win')
+  const tryCount = currRound
+    ? currRound.toString()
+    : undefined
+
+  if (!winMessage) return
+
+  winMessage.style.display = 'block'
+
+  const winMsgContent = winMessage.querySelector('span')
+
+  if (!winMsgContent) return
+  winMsgContent.textContent = tryCount
+    ? `You won the game with ${tryCount} tries!`
+    : 'Congrats - you have won the game!'
+}
+
+const handleLoss = (secCodeRowNode, buttonCheck) => {
+  const loseMessage = document.querySelector('.lose')
+  if (loseMessage) loseMessage.style.display = 'block'
+
+  if (secCodeRowNode) secCodeRowNode.classList.add('secret-code--visible')
+
+  if (buttonCheck) buttonCheck.classList.add('button--inactive')
+}
+
+const handleCheckButton = (e: MouseEvent) => {
+  if (typeof store.currRound === 'undefined') return
+
+  const { currRound, rounds, secretCode } = store
+  const currRoundObj = currRound
+    ? rounds[currRound]
+    : undefined
+
+  const playerCode = currRoundObj
+    ? currRoundObj.playerCode
+    : {}
+
+  const isValidCode = validateCode(playerCode)
+  if (!isValidCode) return
+
+  const { hints, isCorrect } = compareCodes(playerCode, secretCode, MAX_CODE_LENGTH)
+
+  renderHints(hints)
+
+  const buttonCheck = (e.target instanceof HTMLButtonElement)
+    ? e.target
+    : undefined
+
+  moveCheckAndMsg(isCorrect, buttonCheck)
+
+  const secCodeRowNode = document.querySelector('.secret-code')
+
+  if (isCorrect) {
+    handleWin(secCodeRowNode, currRound, buttonCheck)
+    return
+  }
+
+  const gameOver = (
+    store.currRound &&
+    store.currRound >= MAX_TRIES &&
+    !isCorrect
+  )
+
+  if (gameOver) {
+    handleLoss(secCodeRowNode, buttonCheck)
+    return
+  }
+
+  // if no win or lose case has occurred, init new round and update state
+  const newRound = initNewRound(currRound)
+
+  setState({
+    currRound: newRound.currRound,
+    rounds: {
+      ...rounds,
+      [newRound.currRound.toString()]: newRound.newRoundObj
+    }
+  })
+
+  // add class active to current row
+  const rowNodesArray = Array.from(document.querySelectorAll('.panel__row'))
+  markActiveRow(rowNodesArray)
 }
 
 const addListeners = (): void => {
@@ -389,7 +406,12 @@ const addListeners = (): void => {
   }
 
   addStartButtonListeners()
-  addCheckButtonListeners()
+
+  const buttonCheck = document.querySelector('.button--check')
+
+  if (buttonCheck) {
+    buttonCheck.addEventListener('click', handleCheckButton)
+  }
 }
 
 const main = () => {

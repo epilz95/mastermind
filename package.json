@@ -94,6 +94,7 @@
       "it",
       "expect",
       "HTMLElement",
+      "HTMLButtonElement",
       "Event",
       "MouseEvent",
       "NodeList",
