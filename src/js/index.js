@@ -201,6 +201,8 @@ const startGame = () => {
 }
 
 const restartGame = () => {
+  startGame()
+
   const positionNodes = document.querySelectorAll('.position')
 
   if (positionNodes) {
@@ -216,7 +218,8 @@ const restartGame = () => {
 
   setState({
     paletNode: undefined,
-    currRowNode: undefined
+    currRowNode: undefined,
+    currRound: 1
   })
 
   const hints = document.querySelectorAll('.result')
