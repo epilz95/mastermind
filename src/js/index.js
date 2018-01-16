@@ -12,7 +12,7 @@ import type {
   Colors
 } from './types'
 
-import { COLORS, MAX_CODE_LENGTH } from './config'
+import { COLORS, MAX_CODE_LENGTH, MAX_TRIES } from './config'
 
 import { setState, store } from './store'
 
@@ -267,7 +267,10 @@ const addCheckButtonListeners = () => {
         ? currRoundObj.playerCode
         : {}
 
+      // check if playerCode is valid
       const isValidCode = checkCodeLength(playerCode, MAX_CODE_LENGTH)
+
+      // display error message
       const errorMessage = document.querySelector('.error')
 
       if (!isValidCode && errorMessage) {
@@ -281,30 +284,35 @@ const addCheckButtonListeners = () => {
       const { hints, isCorrect } = compareCodes(playerCode, secretCode, MAX_CODE_LENGTH)
 
       if (store.paletNode) {
+        // set the currRowNode to the state to select corresponding hintNodes
         setState({ currRowNode: store.paletNode.parentNode.parentNode })
 
         const hintNodesArray = Array.from(store.currRowNode.querySelectorAll('.result'))
 
+        // fill hints to have specified length
         const convertedHints = fillWithNones(hints, MAX_CODE_LENGTH)
 
+        // display the hints
         displayHints(convertedHints, hintNodesArray)
       }
 
-      const maxTries = 12
       const messages = document.querySelectorAll('.message')
 
+      // move messages and checkButton up
       messages.forEach(message => {
         if (isCorrect) return
-        if (store.currRound && store.currRound >= maxTries && !isCorrect) return
+        if (store.currRound && store.currRound >= MAX_TRIES && !isCorrect) return
         moveItemsPerRound(message, buttonCheck)
       })
 
+      // CASE WIN
       const secCodeRowNode = document.querySelector('.secret-code')
       const winMessage = document.querySelector('.win')
       const tryCount = currRound
         ? currRound.toString()
         : undefined
 
+      // show winMessage with number of tries needed
       if (isCorrect && winMessage && tryCount) {
         const winMsgContent = winMessage.querySelector('span')
 
@@ -314,6 +322,7 @@ const addCheckButtonListeners = () => {
         winMessage.style.display = 'none'
       }
 
+      // show secretCode and make checkButton inactive
       if (isCorrect) {
         if (secCodeRowNode) secCodeRowNode.classList.add('secret-code--visible')
         if (buttonCheck) buttonCheck.classList.add('button--inactive')
@@ -321,10 +330,12 @@ const addCheckButtonListeners = () => {
         return
       }
 
+      // CASE LOSE
+      // show loseMessage, secretCode and make checkButton inactive
       if (
         secCodeRowNode &&
         store.currRound &&
-        store.currRound >= maxTries &&
+        store.currRound >= MAX_TRIES &&
         !isCorrect) {
         const loseMessage = document.querySelector('.lose')
 
@@ -335,6 +346,7 @@ const addCheckButtonListeners = () => {
         return
       }
 
+      // if no win or lose case has occurred, init new round and update state
       const newRound = initNewRound(currRound)
 
       setState({
@@ -345,6 +357,7 @@ const addCheckButtonListeners = () => {
         }
       })
 
+      // add class active to current row
       const rowNodesArray = Array.from(document.querySelectorAll('.panel__row'))
       markActiveRow(rowNodesArray)
     })

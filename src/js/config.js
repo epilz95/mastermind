@@ -4,6 +4,8 @@ import type { Colors } from './types'
 
 export const MAX_CODE_LENGTH: number = 4
 
+export const MAX_TRIES: number = 12
+
 export const COLORS: Colors = [
   {
     name: 'lemon',
