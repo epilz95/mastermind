@@ -49,6 +49,7 @@ describe('initGame()', () => {
     expect(mockCalls[0]).toEqual([{
       secretCode: expect.anything(),
       currRound: 'placeholder',
+      isStarted: true,
       rounds: {
         'placeholder': {}
       }
