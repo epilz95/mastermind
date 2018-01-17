@@ -1,0 +1,49 @@
+.panel {
+    position: relative;
+
+    margin: 0 auto;
+    border: 5px solid $color-white;
+    padding: 20px;
+
+    border-radius: 50px;
+
+    &__row {
+        position: relative;
+
+        margin-bottom: 13px;
+        border: 3px solid $color-white;
+        padding: 4px 8px 7px;
+        width: 100%;
+
+        border-radius: 50px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        &.secret-code {
+            &::before {
+                content: "";
+
+                position: absolute;
+                z-index: 100;
+                top: 1px;
+                right: 0;
+                bottom: 0;
+                left: 1px;
+
+                background-color: $color-mine-shaft;
+
+                border-radius: 50px;
+            }
+
+            .color-code::after {
+                display: none;
+            }
+
+            &.secret-code--visible::before {
+                display: none;
+            }
+        }
+    }
+}
