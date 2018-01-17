@@ -120,7 +120,6 @@ export const initGame = ({
   const newRound = roundInitializer(undefined)
 
   stateSetterFnc({
-    isStarted: true,
     secretCode,
     currRound: newRound.currRound,
     rounds: { [newRound.currRound.toString()]: newRound.newRoundObj }
@@ -161,10 +160,10 @@ const moveItemsPerRound = (message: ?HTMLElement, checkButton: ?HTMLElement) => 
   const currTop = store.currRowNode.offsetTop
   const currHeight = store.currRowNode.offsetHeight
 
-  message.style.top = `${currTop - currHeight - 9}px`
+  message.style.top = `${currTop - currHeight - 13}px`
 
   if (checkButton) {
-    checkButton.style.top = `${currTop - currHeight - 9}px`
+    checkButton.style.top = `${currTop - currHeight - 13}px`
   }
 }
 
@@ -200,57 +199,62 @@ const startGame = () => {
   markActiveRow(rowNodesArray)
 }
 
-const restartGame = () => {
-  startGame()
-
-  const positionNodes = document.querySelectorAll('.position')
-
-  if (positionNodes) {
-    positionNodes.forEach(node => {
-      if (node.parentElement && node.parentElement.parentElement) {
-        const parentRowNode = node.parentElement.parentElement
-        if (parentRowNode.classList.contains('secret-code')) return
-      }
-
-      node.style.backgroundColor = ''
-    })
-  }
-
-  setState({
-    paletNode: undefined,
-    currRowNode: undefined,
-    currRound: 1
-  })
-
-  const hints = document.querySelectorAll('.result')
-  const messages = document.querySelectorAll('.message')
-  const checkButton = document.querySelector('.button--check')
-
-  hints.forEach(hint => hint.classList.remove('fail', 'halfway', 'success'))
-
-  if (messages) {
-    messages.forEach(message => {
-      message.style.top = ''
-      message.style.display = 'none'
-    })
-  }
-
-  if (checkButton) checkButton.style.top = ''
-}
-
 const addStartButtonListeners = () => {
   const buttonStart = document.querySelector('.button-start')
 
   if (!buttonStart) return
 
   buttonStart.addEventListener('click', (e: MouseEvent) => {
-    buttonStart.innerHTML = 'Restart'
+    startGame()
 
-    if (!store.isStarted) {
-      startGame()
-    } else {
-      restartGame()
+    const buttonRestart = document.querySelector('.button-restart')
+
+    buttonStart.style.display = 'none'
+    if (buttonRestart) buttonRestart.style.display = 'block'
+  })
+}
+
+const addRestartButtonListeners = () => {
+  const buttonRestart = document.querySelector('.button-restart')
+
+  if (!buttonRestart) return
+
+  buttonRestart.addEventListener('click', (e: MouseEvent) => {
+    startGame()
+
+    const positionNodes = document.querySelectorAll('.position')
+
+    if (positionNodes) {
+      positionNodes.forEach(node => {
+        node.removeAttribute('disabled')
+
+        if (node.parentElement && node.parentElement.parentElement) {
+          const parentRowNode = node.parentElement.parentElement
+          if (parentRowNode.classList.contains('secret-code')) return
+        }
+
+        node.style.backgroundColor = ''
+      })
     }
+
+    const buttonStart = document.querySelector('.button-start')
+    const hints = document.querySelectorAll('.result')
+    const messages = document.querySelectorAll('.message')
+    const checkButton = document.querySelector('.button--check')
+
+    if (buttonStart) buttonStart.style.display = 'none'
+    buttonRestart.style.display = 'block'
+
+    hints.forEach(hint => hint.classList.remove('fail', 'halfway', 'success'))
+
+    if (messages) {
+      messages.forEach(message => {
+        message.style.top = ''
+        message.style.display = 'none'
+      })
+    }
+
+    if (checkButton) checkButton.style.top = ''
   })
 }
 
@@ -295,7 +299,6 @@ const moveCheckAndMsg = (isCorrect, buttonCheck) => {
 }
 
 const handleWin = (secCodeRowNode, currRound, buttonCheck) => {
-  // show secretCode and make checkButton inactive
   if (secCodeRowNode) secCodeRowNode.classList.add('secret-code--visible')
   if (buttonCheck) buttonCheck.classList.add('button--inactive')
 
@@ -354,6 +357,10 @@ const handleCheckButton = (e: MouseEvent) => {
 
   if (isCorrect) {
     handleWin(secCodeRowNode, currRound, buttonCheck)
+
+    const positionNodes = document.querySelectorAll('.position')
+    positionNodes.forEach(node => node.setAttribute('disabled', ''))
+
     return
   }
 
@@ -365,6 +372,10 @@ const handleCheckButton = (e: MouseEvent) => {
 
   if (gameOver) {
     handleLoss(secCodeRowNode, buttonCheck)
+
+    const positionNodes = document.querySelectorAll('.position')
+    positionNodes.forEach(node => node.setAttribute('disabled', ''))
+
     return
   }
 
@@ -409,6 +420,7 @@ const addListeners = (): void => {
   }
 
   addStartButtonListeners()
+  addRestartButtonListeners()
 
   const buttonCheck = document.querySelector('.button--check')
 

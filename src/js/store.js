@@ -1,7 +1,6 @@
 // @flow
 
 export let store = {
-  isStarted: false,
   paletNode: undefined,
   currRowNode: undefined,
   secretCode: {},

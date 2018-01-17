@@ -3,7 +3,7 @@
     z-index: 1;
 
     border: 3px solid $color-white;
-    padding: 5px 20px;
+    padding: 4px 20px;
 
     background: transparent;
     color: $color-white;
@@ -32,7 +32,7 @@
 
     &--check {
         position: absolute;
-        top: calc(100% - 76px);
+        top: calc(100% - 77px);
         right: -115px;
     }
 
@@ -56,6 +56,10 @@
         &:active {
             transform: scale(1) !important;
         }
+    }
+
+    &-restart {
+        display: none;
     }
 
     &:hover {

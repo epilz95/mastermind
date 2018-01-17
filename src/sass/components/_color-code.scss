@@ -28,7 +28,9 @@
         width: 25px;
         height: 25px;
 
+        background-color: transparent;
         border-radius: 50%;
+        outline: none;
         transition: transform 0.2s;
 
         &:last-child {
